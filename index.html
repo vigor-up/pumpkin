@@ -108,11 +108,6 @@
                 padding-right: env(safe-area-inset-right);
             }
             
-            .safe-margin {
-                margin-left: env(safe-area-inset-left);
-                margin-right: env(safe-area-inset-right);
-            }
-            
             /* 移動設備優化 */
             @media (max-width: 768px) {
                 /* 移除移動端的hover效果 */
@@ -126,14 +121,6 @@
                 
                 .hover\:scale-105:hover {
                     transform: scale(1);
-                }
-                
-                /* 手機上的圖片優化 */
-                .img-mobile-optimized {
-                    width: 100%;
-                    height: auto;
-                    min-height: 200px;
-                    object-fit: cover;
                 }
             }
             
@@ -223,14 +210,10 @@
             .will-change-transform {
                 will-change: transform;
             }
-            
-            .will-change-opacity {
-                will-change: opacity;
-            }
         }
         
         @layer utilities {
-            /* 響應式文字大小 */
+            /* 響應式文字大小 - 手機優先 */
             .text-fluid-xs {
                 font-size: clamp(0.75rem, 3vw, 0.875rem);
             }
@@ -272,7 +255,7 @@
                 line-height: 1.3;
             }
             
-            /* 容器優化 */
+            /* 容器優化 - 手機優先 */
             .container-mobile {
                 width: 100%;
                 padding-left: 1rem;
@@ -309,10 +292,6 @@
             .tap-highlight-none {
                 -webkit-tap-highlight-color: transparent;
             }
-            
-            .tap-highlight-primary {
-                -webkit-tap-highlight-color: rgba(0, 90, 167, 0.1);
-            }
         }
     </style>
 </head>
@@ -328,35 +307,6 @@
                     <span class="text-lg font-bold text-primary text-fluid-lg">活力得®</span>
                 </a>
                 
-                <!-- 語言切換器 -->
-                <div class="language-switcher relative">
-                    <button id="languageBtn" class="btn-touch btn-touch-sm flex items-center space-x-2 rounded-base border border-primary/20 bg-white tap-highlight-primary">
-                        <i class="fas fa-globe text-primary text-sm"></i>
-                        <span id="currentLanguage" class="font-medium text-fluid-sm">繁體中文</span>
-                        <i class="fas fa-chevron-down text-xs ml-1"></i>
-                    </button>
-                    <div id="languageDropdown" class="language-dropdown absolute top-full right-0 mt-1 bg-white rounded-base shadow-card min-w-[140px] hidden">
-                        <div class="language-option link-touch" data-lang="zh-TW" data-rate="1">
-                            <span class="flex items-center justify-between text-fluid-sm">
-                                <span>繁體中文 (NTD)</span>
-                                <i class="fas fa-check text-primary text-sm" id="check-zh-TW"></i>
-                            </span>
-                        </div>
-                        <div class="language-option link-touch" data-lang="zh-CN" data-rate="0.2192">
-                            <span class="flex items-center justify-between text-fluid-sm">
-                                <span>简体中文 (CNY)</span>
-                                <i class="fas fa-check text-primary text-sm hidden" id="check-zh-CN"></i>
-                            </span>
-                        </div>
-                        <div class="language-option link-touch" data-lang="en" data-rate="0.0320">
-                            <span class="flex items-center justify-between text-fluid-sm">
-                                <span>English (USD)</span>
-                                <i class="fas fa-check text-primary text-sm hidden" id="check-en"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- 桌面導航 -->
                 <nav class="hidden md:flex items-center space-x-4 lg:space-x-6">
                     <a href="#summary" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">執行摘要</a>
@@ -448,28 +398,6 @@
                     <p class="text-gray-700 text-fluid-sm">日常活動信心大幅提升，重拾優質生活</p>
                 </div>
             </div>
-            
-            <!-- ROI投資回報率卡片 -->
-            <div class="mt-8 md:mt-12 p-4 md:p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-card border border-primary/20">
-                <h3 class="text-xl md:text-2xl font-bold text-primary mb-3 md:mb-4">投資回報分析 (ROI)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-bold text-urinary mb-2">2,104%</div>
-                        <p class="text-gray-700 text-fluid-sm">年投資回報率</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-bold text-secondary mb-2">2,764%</div>
-                        <p class="text-gray-700 text-fluid-sm">三年累計回報</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-bold text-accent mb-2">
-                            <span class="currency-value" data-value="45000000">45,000,000</span>
-                            <span class="currency-symbol text-lg">NTD</span>
-                        </div>
-                        <p class="text-gray-700 text-fluid-sm">預估年度營收</p>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- 核心技術架構區塊 - 已優化手機顯示 -->
@@ -517,7 +445,7 @@
                         <!-- 圖2：技術製程圖片 -->
                         <div class="group overflow-hidden rounded-img bg-white p-2 shadow-img hover:shadow-hover transition-all duration-500 will-change-transform touch-active">
                             <div class="overflow-hidden rounded-img">
-                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500 img-mobile-optimized" 
+                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500" 
                                      src="assets/technology_process.jpg" 
                                      alt="活力得® 南瓜籽胜肽與螺旋藻素雙重製程"
                                      loading="lazy" />
@@ -528,7 +456,7 @@
                         <!-- 圖3：實驗室車間圖片 -->
                         <div class="group overflow-hidden rounded-img bg-white p-2 shadow-img hover:shadow-hover transition-all duration-500 will-change-transform touch-active">
                             <div class="overflow-hidden rounded-img">
-                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500 img-mobile-optimized" 
+                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500" 
                                      src="assets/laboratory_workshop.jpg" 
                                      alt="活力得® 美國實驗室級製程車間"
                                      loading="lazy" />
@@ -624,34 +552,6 @@
                             <strong>加強調護：</strong>初期可每日1粒，連續服用4週後調整為維持劑量（1~3天1粒）；<br>
                             <strong>服用時間：</strong>建議飯後30分鐘服用，以提升吸收效果。
                         </p>
-                    </div>
-                    
-                    <!-- 價格資訊 -->
-                    <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
-                        <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-primary">價格資訊</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                            <div class="text-center p-3 md:p-4 bg-neutral rounded-base">
-                                <div class="text-xl md:text-2xl font-bold text-primary mb-2">
-                                    <span class="currency-value" data-value="1200">1,200</span>
-                                    <span class="currency-symbol text-fluid-sm">NTD</span>
-                                </div>
-                                <p class="text-gray-700 text-fluid-xs">零售價/盒</p>
-                            </div>
-                            <div class="text-center p-3 md:p-4 bg-primary/5 rounded-base">
-                                <div class="text-xl md:text-2xl font-bold text-secondary mb-2">
-                                    <span class="currency-value" data-value="800">800</span>
-                                    <span class="currency-symbol text-fluid-sm">NTD</span>
-                                </div>
-                                <p class="text-gray-700 text-fluid-xs">批發價/盒</p>
-                            </div>
-                            <div class="text-center p-3 md:p-4 bg-accent/5 rounded-base">
-                                <div class="text-xl md:text-2xl font-bold text-accent mb-2">
-                                    <span class="currency-value" data-value="600">600</span>
-                                    <span class="currency-symbol text-fluid-sm">NTD</span>
-                                </div>
-                                <p class="text-gray-700 text-fluid-xs">大宗採購價/盒</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -879,108 +779,6 @@
             lazyImages.forEach(img => imageObserver.observe(img));
         });
 
-        // 多語言翻譯數據
-        const translations = {
-            'zh-TW': {},
-            'zh-CN': {},
-            'en': {}
-        };
-        
-        // 貨幣符號映射
-        const currencySymbols = {
-            'zh-TW': 'NTD',
-            'zh-CN': 'CNY',
-            'en': 'USD'
-        };
-
-        // 當前語言設置
-        let currentLang = 'zh-TW';
-
-        // 語言切換功能
-        const languageBtn = document.getElementById('languageBtn');
-        const languageDropdown = document.getElementById('languageDropdown');
-        const currentLanguageSpan = document.getElementById('currentLanguage');
-
-        // 切換語言
-        function switchLanguage(lang) {
-            currentLang = lang;
-            
-            // 更新按鈕顯示
-            currentLanguageSpan.textContent = lang === 'zh-TW' ? '繁體中文' : 
-                                             lang === 'zh-CN' ? '简体中文' : 'English';
-            
-            // 更新勾選標記
-            document.querySelectorAll('.language-option i.fa-check').forEach(check => {
-                check.classList.add('hidden');
-            });
-            document.getElementById(`check-${lang}`).classList.remove('hidden');
-            
-            // 翻譯所有帶有data-translate屬性的元素
-            document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (translations[lang] && translations[lang][key]) {
-                    element.innerHTML = translations[lang][key];
-                }
-            });
-            
-            // 更新貨幣數值
-            updateCurrencyValues(lang);
-            
-            // 隱藏下拉選單
-            languageDropdown.classList.add('hidden');
-        }
-
-        // 更新貨幣數值
-        function updateCurrencyValues(lang) {
-            const rate = parseFloat(document.querySelector(`[data-lang="${lang}"]`).getAttribute('data-rate'));
-            
-            document.querySelectorAll('.currency-value').forEach(element => {
-                const originalValue = parseFloat(element.getAttribute('data-value').replace(/,/g, ''));
-                if (!isNaN(originalValue)) {
-                    // 如果是百分比數值（ROI），不進行貨幣轉換
-                    const isPercentage = element.closest('.roi-value') || 
-                                        element.textContent.includes('%') ||
-                                        element.closest('.text-2xl') || 
-                                        element.closest('.text-3xl') || 
-                                        element.closest('.text-4xl');
-                    
-                    if (isPercentage) {
-                        // 百分比保持原樣
-                        return;
-                    }
-                    
-                    // 貨幣轉換
-                    const convertedValue = Math.round(originalValue * rate);
-                    element.textContent = convertedValue.toLocaleString();
-                    
-                    // 更新貨幣符號
-                    const currencySymbolElement = element.nextElementSibling;
-                    if (currencySymbolElement && currencySymbolElement.classList.contains('currency-symbol')) {
-                        currencySymbolElement.textContent = currencySymbols[lang];
-                    }
-                }
-            });
-        }
-
-        // 事件監聽器
-        languageBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            languageDropdown.classList.toggle('hidden');
-        });
-
-        document.querySelectorAll('.language-option').forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const lang = this.getAttribute('data-lang');
-                switchLanguage(lang);
-            });
-        });
-
-        // 點擊頁面其他區域關閉下拉選單
-        document.addEventListener('click', function() {
-            languageDropdown.classList.add('hidden');
-        });
-
         // 行動端選單功能
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -1059,23 +857,6 @@
             });
         });
 
-        // 防止iOS橡皮筋效果
-        document.body.addEventListener('touchmove', function(e) {
-            if (e.target.classList.contains('table-scroll-container') || 
-                e.target.closest('.table-scroll-container')) {
-                return;
-            }
-            
-            if (this.scrollTop === 0) {
-                this.scrollTop = 1;
-            } else if (this.scrollHeight - this.scrollTop === this.clientHeight) {
-                this.scrollTop -= 1;
-            }
-        }, false);
-
-        // 初始化語言
-        switchLanguage('zh-TW');
-        
         // 監聽視窗大小變化，優化移動體驗
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 768 && !mobileMenu.classList.contains('hidden')) {
