@@ -2,7 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#005AA7">
     <title>活力得® 南瓜籽胜肽+螺旋藻素複合精華 - 技術數據表 (TDS)</title>
     <!-- Tailwind CSS 引入 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,6 +17,14 @@
     <script>
         tailwind.config = {
             theme: {
+                screens: {
+                    'xs': '375px',
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                    '2xl': '1536px',
+                },
                 extend: {
                     colors: {
                         primary: '#005AA7',
@@ -38,6 +47,7 @@
                         hover: '0 8px 20px rgba(0,0,0,0.1), 0 0 0 2px rgba(0, 90, 167, 0.08)',
                         img: '0 6px 16px rgba(0,0,0,0.08)',
                         glow: '0 0 12px rgba(0, 90, 167, 0.1)',
+                        'touching': '0 0 0 4px rgba(0, 90, 167, 0.2)',
                     },
                     backgroundImage: {
                         'gradient-herb': 'linear-gradient(135deg, #E8F0FE 0%, #E0F2F1 100%)',
@@ -46,328 +56,570 @@
                     fontFamily: {
                         sans: ['Arial', 'Noto Sans TC', 'sans-serif'],
                     },
+                    fontSize: {
+                        'xs': '0.75rem',     // 12px
+                        'sm': '0.875rem',    // 14px
+                        'base': '1rem',      // 16px
+                        'lg': '1.125rem',    // 18px
+                        'xl': '1.25rem',     // 20px
+                        '2xl': '1.5rem',     // 24px
+                        '3xl': '1.875rem',   // 30px
+                        '4xl': '2.25rem',    // 36px
+                        '5xl': '3rem',       // 48px
+                    },
+                    spacing: {
+                        'touch': '44px',     // 最小觸控區域
+                        'safe-top': 'env(safe-area-inset-top)',
+                        'safe-bottom': 'env(safe-area-inset-bottom)',
+                        'safe-left': 'env(safe-area-inset-left)',
+                        'safe-right': 'env(safe-area-inset-right)',
+                    },
+                    transitionDuration: {
+                        'touch': '150ms',
+                    }
                 }
             }
         }
     </script>
     <style type="text/tailwindcss">
-        @layer utilities {
-            .img-hover-zoom {
-                overflow: hidden;
-                border-radius: 1rem;
+        @layer base {
+            /* 基礎重置和優化 */
+            * {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
             }
-            .img-hover-zoom img {
-                transition: all 0.5s ease;
+            
+            html {
+                scroll-behavior: smooth;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+            
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+                overscroll-behavior-y: contain;
+            }
+            
+            /* 安全區域支持 */
+            .safe-padding {
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+            
+            .safe-margin {
+                margin-left: env(safe-area-inset-left);
+                margin-right: env(safe-area-inset-right);
+            }
+            
+            /* 移動設備優化 */
+            @media (max-width: 768px) {
+                /* 移除移動端的hover效果 */
+                .hover\:shadow-hover:hover {
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+                }
+                
+                .hover\:-translate-y-1:hover {
+                    transform: translateY(0);
+                }
+                
+                .hover\:scale-105:hover {
+                    transform: scale(1);
+                }
+                
+                /* 手機上的圖片優化 */
+                .img-mobile-optimized {
+                    width: 100%;
+                    height: auto;
+                    min-height: 200px;
+                    object-fit: cover;
+                }
+            }
+            
+            /* 觸摸反饋效果 */
+            .touch-active:active {
+                transform: scale(0.98);
+                transition-duration: 100ms;
+            }
+            
+            .touch-highlight:active {
+                background-color: rgba(0, 90, 167, 0.1);
+            }
+        }
+        
+        @layer components {
+            /* 觸控友好按鈕 */
+            .btn-touch {
+                min-height: 44px;
+                padding: 12px 24px;
+                font-size: 1rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                touch-action: manipulation;
+                user-select: none;
+            }
+            
+            .btn-touch-sm {
+                min-height: 36px;
+                padding: 8px 16px;
+                font-size: 0.875rem;
+            }
+            
+            /* 觸控友好連結 */
+            .link-touch {
+                padding: 8px 12px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* 卡片組件 */
+            .card-mobile {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                border: 1px solid rgba(0,0,0,0.04);
+                transition: all 0.2s ease;
+                will-change: transform, box-shadow;
+            }
+            
+            .card-mobile:active {
+                transform: translateY(2px);
+                box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            }
+            
+            /* 圖片優化 */
+            .img-responsive {
                 width: 100%;
                 height: auto;
-            }
-            .img-hover-zoom:hover img {
-                transform: scale(1.04);
-                filter: brightness(1.04);
-            }
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .text-shadow {
-                text-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            }
-            .scroll-smooth {
-                scroll-behavior: smooth;
-            }
-            .card-luxury {
-                background: white;
-                border: 1px solid rgba(0, 90, 167, 0.04);
-            }
-            .medical-table th {
-                background-color: #005AA710;
-                font-weight: 600;
-                text-transform: uppercase;
-                font-size: 0.875rem;
-                letter-spacing: 0.5px;
-            }
-            .medical-table td {
-                font-size: 0.95rem;
-            }
-            .medical-table tr:hover {
-                background-color: #F5F7FA;
-            }
-            .fade-in {
-                animation: fadeIn 0.8s ease-out;
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            .language-switcher {
-                position: relative;
-            }
-            .language-dropdown {
-                display: none;
-                position: absolute;
-                top: 100%;
-                right: 0;
-                background: white;
-                border-radius: 6px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                min-width: 150px;
-                z-index: 1000;
-            }
-            .language-dropdown.show {
                 display: block;
+                max-width: 100%;
             }
-            .language-option {
-                padding: 10px 16px;
-                cursor: pointer;
-                transition: background-color 0.2s;
+            
+            .img-lazy {
+                opacity: 0;
+                transition: opacity 0.3s ease;
             }
-            .language-option:hover {
-                background-color: #F5F7FA;
+            
+            .img-lazy.loaded {
+                opacity: 1;
             }
-            .currency-value {
-                transition: all 0.3s ease;
+            
+            /* 行動選單 */
+            .mobile-menu {
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+                will-change: transform;
+            }
+            
+            .mobile-menu.open {
+                transform: translateY(0);
+            }
+            
+            /* 動畫優化 */
+            .will-change-transform {
+                will-change: transform;
+            }
+            
+            .will-change-opacity {
+                will-change: opacity;
+            }
+        }
+        
+        @layer utilities {
+            /* 響應式文字大小 */
+            .text-fluid-xs {
+                font-size: clamp(0.75rem, 3vw, 0.875rem);
+            }
+            
+            .text-fluid-sm {
+                font-size: clamp(0.875rem, 3.5vw, 1rem);
+            }
+            
+            .text-fluid-base {
+                font-size: clamp(1rem, 4vw, 1.125rem);
+            }
+            
+            .text-fluid-lg {
+                font-size: clamp(1.125rem, 4.5vw, 1.25rem);
+            }
+            
+            .text-fluid-xl {
+                font-size: clamp(1.25rem, 5vw, 1.5rem);
+            }
+            
+            .text-fluid-2xl {
+                font-size: clamp(1.5rem, 6vw, 2rem);
+            }
+            
+            .text-fluid-3xl {
+                font-size: clamp(1.875rem, 7vw, 2.5rem);
+            }
+            
+            /* 行高優化 */
+            .leading-relaxed-mobile {
+                line-height: 1.6;
+            }
+            
+            .leading-normal-mobile {
+                line-height: 1.5;
+            }
+            
+            .leading-tight-mobile {
+                line-height: 1.3;
+            }
+            
+            /* 容器優化 */
+            .container-mobile {
+                width: 100%;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            @media (min-width: 640px) {
+                .container-mobile {
+                    padding-left: 1.5rem;
+                    padding-right: 1.5rem;
+                }
+            }
+            
+            @media (min-width: 1024px) {
+                .container-mobile {
+                    max-width: 1200px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+            }
+            
+            /* iOS 100vh 修復 */
+            .min-h-screen-ios {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+            
+            .h-screen-ios {
+                height: 100vh;
+                height: -webkit-fill-available;
+            }
+            
+            /* 觸摸效果 */
+            .tap-highlight-none {
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .tap-highlight-primary {
+                -webkit-tap-highlight-color: rgba(0, 90, 167, 0.1);
             }
         }
     </style>
 </head>
-<body class="font-sans text-dark bg-gray-50 scroll-smooth">
+<body class="font-sans text-dark bg-gray-50 min-h-screen-ios safe-padding">
     <!-- 頁首導航欄 -->
-    <header class="sticky top-0 z-50 bg-white shadow-md backdrop-blur-sm bg-white/95">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between py-4">
+    <header class="sticky top-0 z-50 bg-white shadow-md backdrop-blur-sm bg-white/95 safe-padding" 
+            style="padding-top: env(safe-area-inset-top);">
+        <div class="container-mobile">
+            <div class="flex items-center justify-between py-3">
                 <!-- LOGO 區塊 -->
-                <a href="#" class="flex items-center space-x-2">
-                    <img src="assets/logo.png" alt="活力得® 品牌LOGO" class="h-12 w-auto">
-                    <span class="text-xl font-bold text-primary text-shadow">活力得®</span>
+                <a href="#" class="flex items-center space-x-2 link-touch tap-highlight-none">
+                    <img src="assets/logo.png" alt="活力得® 品牌LOGO" class="h-10 w-auto sm:h-12" loading="lazy">
+                    <span class="text-lg font-bold text-primary text-fluid-lg">活力得®</span>
                 </a>
                 
                 <!-- 語言切換器 -->
-                <div class="language-switcher">
-                    <button id="languageBtn" class="flex items-center space-x-2 px-4 py-2 rounded-base border border-primary/20 hover:bg-primary/5 transition-colors">
-                        <i class="fas fa-globe text-primary"></i>
-                        <span id="currentLanguage" class="font-medium">繁體中文</span>
-                        <i class="fas fa-chevron-down text-sm"></i>
+                <div class="language-switcher relative">
+                    <button id="languageBtn" class="btn-touch btn-touch-sm flex items-center space-x-2 rounded-base border border-primary/20 bg-white tap-highlight-primary">
+                        <i class="fas fa-globe text-primary text-sm"></i>
+                        <span id="currentLanguage" class="font-medium text-fluid-sm">繁體中文</span>
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
                     </button>
-                    <div id="languageDropdown" class="language-dropdown">
-                        <div class="language-option" data-lang="zh-TW" data-rate="1">
-                            <span class="flex items-center justify-between">
+                    <div id="languageDropdown" class="language-dropdown absolute top-full right-0 mt-1 bg-white rounded-base shadow-card min-w-[140px] hidden">
+                        <div class="language-option link-touch" data-lang="zh-TW" data-rate="1">
+                            <span class="flex items-center justify-between text-fluid-sm">
                                 <span>繁體中文 (NTD)</span>
-                                <i class="fas fa-check text-primary" id="check-zh-TW"></i>
+                                <i class="fas fa-check text-primary text-sm" id="check-zh-TW"></i>
                             </span>
                         </div>
-                        <div class="language-option" data-lang="zh-CN" data-rate="0.2192">
-                            <span class="flex items-center justify-between">
+                        <div class="language-option link-touch" data-lang="zh-CN" data-rate="0.2192">
+                            <span class="flex items-center justify-between text-fluid-sm">
                                 <span>简体中文 (CNY)</span>
-                                <i class="fas fa-check text-primary hidden" id="check-zh-CN"></i>
+                                <i class="fas fa-check text-primary text-sm hidden" id="check-zh-CN"></i>
                             </span>
                         </div>
-                        <div class="language-option" data-lang="en" data-rate="0.0320">
-                            <span class="flex items-center justify-between">
+                        <div class="language-option link-touch" data-lang="en" data-rate="0.0320">
+                            <span class="flex items-center justify-between text-fluid-sm">
                                 <span>English (USD)</span>
-                                <i class="fas fa-check text-primary hidden" id="check-en"></i>
+                                <i class="fas fa-check text-primary text-sm hidden" id="check-en"></i>
                             </span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 桌面導航 -->
-                <nav class="hidden md:flex items-center space-x-8">
-                    <a href="#summary" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">執行摘要</a>
-                    <a href="#technology" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">核心技術</a>
-                    <a href="#mechanism" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">作用機轉</a>
-                    <a href="#benefit" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">效益與安全</a>
-                    <a href="#ingredient" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">臻萃原料</a>
-                    <a href="#product" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">產品規格</a>
-                    <a href="#contact" class="text-gray-700 hover:text-primary transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full">聯繫我們</a>
+                <nav class="hidden md:flex items-center space-x-4 lg:space-x-6">
+                    <a href="#summary" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">執行摘要</a>
+                    <a href="#technology" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">核心技術</a>
+                    <a href="#mechanism" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">作用機轉</a>
+                    <a href="#benefit" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">效益與安全</a>
+                    <a href="#ingredient" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">臻萃原料</a>
+                    <a href="#product" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">產品規格</a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary transition-colors font-medium text-fluid-sm link-touch">聯繫我們</a>
                 </nav>
                 
                 <!-- 行動端選單按鈕 -->
-                <button class="md:hidden text-gray-700" id="menuBtn">
-                    <i class="fa-solid fa-bars text-2xl"></i>
+                <button class="md:hidden text-gray-700 btn-touch btn-touch-sm" id="menuBtn" aria-label="開啟選單">
+                    <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
-            
-            <!-- 行動端導航選單 -->
-            <div class="md:hidden hidden pb-4" id="mobileMenu">
-                <nav class="flex flex-col space-y-3">
-                    <a href="#summary" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">執行摘要</a>
-                    <a href="#technology" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">核心技術</a>
-                    <a href="#mechanism" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">作用機轉</a>
-                    <a href="#benefit" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">效益與安全</a>
-                    <a href="#ingredient" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">臻萃原料</a>
-                    <a href="#product" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">產品規格</a>
-                    <a href="#contact" class="text-gray-700 hover:text-primary transition-colors font-medium py-2 px-2 rounded-base hover:bg-neutral">聯繫我們</a>
-                </nav>
-            </div>
+        </div>
+        
+        <!-- 行動端導航選單 -->
+        <div class="md:hidden mobile-menu absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-100 safe-padding hidden" id="mobileMenu">
+            <nav class="flex flex-col py-2">
+                <a href="#summary" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">執行摘要</a>
+                <a href="#technology" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">核心技術</a>
+                <a href="#mechanism" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">作用機轉</a>
+                <a href="#benefit" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">效益與安全</a>
+                <a href="#ingredient" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">臻萃原料</a>
+                <a href="#product" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium border-b border-gray-100 text-fluid-base touch-highlight">產品規格</a>
+                <a href="#contact" class="link-touch text-gray-700 hover:text-primary transition-colors font-medium text-fluid-base touch-highlight">聯繫我們</a>
+            </nav>
         </div>
     </header>
 
     <!-- 頂部橫幅區 -->
-    <section class="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden">
-        <img class="absolute inset-0 w-full h-full object-cover" src="assets/banner_main.jpg" alt="活力得® 南瓜籽與螺旋藻有機原料" />
+    <section class="relative w-full min-h-[50vh] h-screen-ios overflow-hidden safe-padding">
+        <img class="absolute inset-0 w-full h-full object-cover img-lazy" 
+             src="assets/banner_main.jpg" 
+             alt="活力得® 南瓜籽與螺旋藻有機原料"
+             loading="lazy" />
         <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-dark/40 flex flex-col justify-center items-center text-white px-4 md:px-8">
-            <div class="text-[clamp(1.8rem,5vw,3.5rem)] font-black text-center leading-tight text-shadow" data-translate="banner_title">
+            <div class="text-fluid-3xl md:text-fluid-4xl font-black text-center leading-tight-mobile px-2">
                 &nbsp; 活力得&reg; <br class="md:hidden"/>南瓜籽胜肽 + 螺旋藻素複合精華
             </div>
-            <div class="mt-6 text-[clamp(1rem,2vw,1.25rem)] font-light text-center max-w-4xl leading-relaxed" data-translate="banner_subtitle">
+            <div class="mt-4 md:mt-6 text-fluid-base md:text-fluid-lg font-light text-center max-w-4xl leading-relaxed-mobile px-2">
                 美國實驗室級科學臻萃｜標準化85%南瓜籽胜肽 & 高純度螺旋藻素<br class="md:hidden"/>
                 【專攻中老年泌尿健康】頻尿/漏尿/夜尿精準調護 &middot; 抗氧化能量奢寵升級
             </div>
-            <div class="mt-8 bg-primary/90 px-8 py-3 rounded-btn text-lg font-bold hover:bg-primary transition-colors transform hover:scale-105 duration-300 shadow-glow" data-translate="banner_tagline">
+            <div class="mt-6 md:mt-8 bg-primary/90 px-6 md:px-8 py-3 rounded-btn text-fluid-base font-bold touch-active shadow-glow btn-touch">
                 活力得&reg; 天然機能保健 &copy; 2026
             </div>
         </div>
     </section>
 
     <!-- 主要內容容器 -->
-    <div class="container mx-auto px-4 py-12 md:py-16 max-w-7xl">
+    <div class="container-mobile py-6 md:py-8 lg:py-12">
         <!-- 執行摘要區塊 -->
-        <section id="summary" class="mb-16 md:mb-20 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-6 md:mb-8 flex items-center">
-                <i class="fa-solid fa-chart-line mr-3 text-secondary text-2xl"></i>
-                <span data-translate="summary_title">執行摘要：美國實驗室級核心價值與關鍵指標</span>
+        <section id="summary" class="mb-8 md:mb-12 lg:mb-16">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-chart-line mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>執行摘要：美國實驗室級核心價值與關鍵指標</span>
             </h2>
-            <p class="text-lg md:text-xl mb-8 md:mb-10 leading-relaxed text-gray-800" data-translate="summary_content">
+            <p class="text-fluid-base md:text-fluid-lg mb-6 md:mb-8 leading-relaxed-mobile text-gray-800">
                 <strong class="text-secondary font-semibold">核心定位：</strong>突破傳統萃取技術瓶頸，採用美國實驗室級專利酵素水解與低溫冷萃工藝，自有機認證南瓜籽中提取高純度胜肽（Cucurbita Pepo Peptide），並複配超級食物螺旋藻（Spirulina）的全維營養素，針對中老年泌尿系統機能退化、氧化壓力累積與精力耗竭等問題，提供<span class="text-primary font-medium">科學實證、安全無負擔的頂級保健方案</span>，重新定義天然機能調護的黃金標準。
             </p>
             
             <!-- 摘要數據卡片 -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 md:mb-10">
-                <div class="card-luxury rounded-card shadow-card p-6 hover:shadow-hover transition-all duration-300 transform hover:-translate-y-1">
-                    <h4 class="font-bold text-lg mb-3 text-secondary flex items-center"><i class="fa-solid fa-flask mr-2"></i><span data-translate="card1_title">南瓜籽胜肽純度</span></h4>
-                    <div class="text-base text-gray-600 mb-2" data-translate="card1_subtitle">傳統水解 60% &rarr; 美國實驗室級專利技術 85%+</div>
-                    <div class="text-3xl font-bold text-accent mb-3 roi-value">&uarr; 42%</div>
-                    <p class="text-gray-700" data-translate="card1_desc">關鍵活性成分顯著提升，吸收效率倍增</p>
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 mb-6 md:mb-8 lg:mb-10">
+                <div class="card-mobile p-4 md:p-6 touch-active">
+                    <h4 class="font-bold text-fluid-base md:text-lg mb-2 text-secondary flex items-center"><i class="fa-solid fa-flask mr-2 text-sm"></i>南瓜籽胜肽純度</h4>
+                    <div class="text-fluid-sm text-gray-600 mb-2">傳統水解 60% → 美國實驗室級專利技術 85%+</div>
+                    <div class="text-2xl md:text-3xl font-bold text-accent mb-2">&uarr; 42%</div>
+                    <p class="text-gray-700 text-fluid-sm">關鍵活性成分顯著提升，吸收效率倍增</p>
                 </div>
-                <div class="card-luxury rounded-card shadow-card p-6 hover:shadow-hover transition-all duration-300 transform hover:-translate-y-1">
-                    <h4 class="font-bold text-lg mb-3 text-secondary flex items-center"><i class="fa-solid fa-shield-virus mr-2"></i><span data-translate="card2_title">抗氧化力(ORAC)</span></h4>
-                    <div class="text-base text-gray-600 mb-2" data-translate="card2_subtitle">螺旋藻複合配方美國實驗室級升級</div>
-                    <div class="text-3xl font-bold text-accent mb-3 roi-value">&uarr; 65%</div>
-                    <p class="text-gray-700" data-translate="card2_desc">深層對抗自由基，延緩機能老化進程</p>
+                <div class="card-mobile p-4 md:p-6 touch-active">
+                    <h4 class="font-bold text-fluid-base md:text-lg mb-2 text-secondary flex items-center"><i class="fa-solid fa-shield-virus mr-2 text-sm"></i>抗氧化力(ORAC)</h4>
+                    <div class="text-fluid-sm text-gray-600 mb-2">螺旋藻複合配方美國實驗室級升級</div>
+                    <div class="text-2xl md:text-3xl font-bold text-accent mb-2">&uarr; 65%</div>
+                    <p class="text-gray-700 text-fluid-sm">深層對抗自由基，延緩機能老化進程</p>
                 </div>
-                <div class="card-luxury rounded-card shadow-card p-6 hover:shadow-hover transition-all duration-300 transform hover:-translate-y-1 border-t-4 border-urinary">
-                    <h4 class="font-bold text-lg mb-3 text-urinary flex items-center"><i class="fa-solid fa-bed mr-2"></i><span data-translate="card3_title">夜尿次數改善</span></h4>
-                    <div class="text-base text-gray-600 mb-2" data-translate="card3_subtitle">基線 3.8次 &rarr; 12週後 1.0次</div>
-                    <div class="text-3xl font-bold text-urinary mb-3 roi-value">&darr; 74%</div>
-                    <p class="text-gray-700" data-translate="card3_desc">中老年夜尿問題顯著緩解，睡眠品質升級</p>
+                <div class="card-mobile p-4 md:p-6 touch-active border-t-4 border-urinary">
+                    <h4 class="font-bold text-fluid-base md:text-lg mb-2 text-urinary flex items-center"><i class="fa-solid fa-bed mr-2 text-sm"></i>夜尿次數改善</h4>
+                    <div class="text-fluid-sm text-gray-600 mb-2">基線 3.8次 → 12週後 1.0次</div>
+                    <div class="text-2xl md:text-3xl font-bold text-urinary mb-2">&darr; 74%</div>
+                    <p class="text-gray-700 text-fluid-sm">中老年夜尿問題顯著緩解，睡眠品質升級</p>
                 </div>
-                <div class="card-luxury rounded-card shadow-card p-6 hover:shadow-hover transition-all duration-300 transform hover:-translate-y-1 border-t-4 border-kidney">
-                    <h4 class="font-bold text-lg mb-3 text-kidney flex items-center"><i class="fa-solid fa-star mr-2"></i><span data-translate="card4_title">生活品質評分</span></h4>
-                    <div class="text-base text-gray-600 mb-2" data-translate="card4_subtitle">泌尿相關生活困擾精準改善</div>
-                    <div class="text-3xl font-bold text-kidney mb-3 roi-value">&uarr; 58%</div>
-                    <p class="text-gray-700" data-translate="card4_desc">日常活動信心大幅提升，重拾優質生活</p>
+                <div class="card-mobile p-4 md:p-6 touch-active border-t-4 border-kidney">
+                    <h4 class="font-bold text-fluid-base md:text-lg mb-2 text-kidney flex items-center"><i class="fa-solid fa-star mr-2 text-sm"></i>生活品質評分</h4>
+                    <div class="text-fluid-sm text-gray-600 mb-2">泌尿相關生活困擾精準改善</div>
+                    <div class="text-2xl md:text-3xl font-bold text-kidney mb-2">&uarr; 58%</div>
+                    <p class="text-gray-700 text-fluid-sm">日常活動信心大幅提升，重拾優質生活</p>
                 </div>
             </div>
             
-            <!-- 新增：ROI投資回報率卡片 -->
-            <div class="mt-12 p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-card border border-primary/20">
-                <h3 class="text-2xl font-bold text-primary mb-4" data-translate="roi_title">投資回報分析 (ROI)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- ROI投資回報率卡片 -->
+            <div class="mt-8 md:mt-12 p-4 md:p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-card border border-primary/20">
+                <h3 class="text-xl md:text-2xl font-bold text-primary mb-3 md:mb-4">投資回報分析 (ROI)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     <div class="text-center">
-                        <div class="text-4xl font-bold text-urinary mb-2 roi-value">2,104%</div>
-                        <p class="text-gray-700" data-translate="roi_1">年投資回報率</p>
+                        <div class="text-3xl md:text-4xl font-bold text-urinary mb-2">2,104%</div>
+                        <p class="text-gray-700 text-fluid-sm">年投資回報率</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-4xl font-bold text-secondary mb-2 roi-value">2,764%</div>
-                        <p class="text-gray-700" data-translate="roi_2">三年累計回報</p>
+                        <div class="text-3xl md:text-4xl font-bold text-secondary mb-2">2,764%</div>
+                        <p class="text-gray-700 text-fluid-sm">三年累計回報</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-4xl font-bold text-accent mb-2">
+                        <div class="text-3xl md:text-4xl font-bold text-accent mb-2">
                             <span class="currency-value" data-value="45000000">45,000,000</span>
                             <span class="currency-symbol text-lg">NTD</span>
                         </div>
-                        <p class="text-gray-700" data-translate="roi_3">預估年度營收</p>
+                        <p class="text-gray-700 text-fluid-sm">預估年度營收</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 核心技術架構區塊 -->
-        <section id="technology" class="mb-16 md:mb-20 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-6 md:mb-8 flex items-center">
-                <i class="fa-solid fa-flask-vial mr-3 text-secondary text-2xl"></i>
-                <span data-translate="tech_title">核心雙重原料與美國實驗室級科學製程</span>
+        <!-- 核心技術架構區塊 - 已優化手機顯示 -->
+        <section id="technology" class="mb-8 md:mb-12 lg:mb-20">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-flask-vial mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>核心雙重原料與美國實驗室級科學製程</span>
             </h2>
-            <div class="flex flex-col md:flex-row gap-8 md:gap-10 items-center mb-12">
-                <div class="w-full md:w-1/2">
-                    <p class="text-lg md:text-xl mb-6 leading-relaxed text-gray-800" data-translate="tech_intro">
+            
+            <div class="flex flex-col lg:flex-row items-center gap-4 md:gap-8 lg:gap-10 mb-8 md:mb-10">
+                <!-- 文字內容區塊 -->
+                <div class="w-full lg:w-1/2">
+                    <p class="text-fluid-base md:text-fluid-lg mb-4 md:mb-6 leading-relaxed-mobile text-gray-800">
                         <strong class="text-secondary font-semibold">雙重機轉，協同臻效｜</strong>南瓜籽胜肽精準調節泌尿系統機能，螺旋藻素全維滋養細胞活力，搭配美國實驗室級製程技術，實現「精準調護+全面賦能」的雙重價值。
                     </p>
-                    <div class="space-y-4 mb-8">
-                        <div class="bg-neutral rounded-lg p-4 shadow-sm border-l-4 border-primary">
-                            <h4 class="font-bold text-secondary text-lg flex items-center"><i class="fa-solid fa-microscope mr-2"></i><span data-translate="tech_point1">1. 美國實驗室級專利酵素水解胜肽</span></h4>
-                            <p class="text-gray-700" data-translate="tech_desc1">採用定點酵素切割技術，精準釋放南瓜籽中具生物活性的小分子胜肽，分子量＜1000Da，可直接穿透腸壁吸收，直達泌尿系統發揮作用，避免傳統大分子蛋白質吸收效率低的問題。</p>
+                    <div class="space-y-3 md:space-y-4">
+                        <div class="bg-neutral rounded-card p-3 md:p-4 border-l-4 border-primary shadow-sm touch-active">
+                            <h4 class="font-bold text-secondary text-fluid-base md:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-microscope mr-2 text-sm text-primary"></i>
+                                <span>1. 美國實驗室級專利酵素水解胜肽</span>
+                            </h4>
+                            <p class="text-gray-700 leading-normal-mobile text-fluid-sm">採用定點酵素切割技術，精準釋放南瓜籽中具生物活性的小分子胜肽，分子量＜1000Da，可直接穿透腸壁吸收，直達泌尿系統發揮作用，避免傳統大分子蛋白質吸收效率低的問題。</p>
                         </div>
-                        <div class="bg-neutral rounded-lg p-4 shadow-sm border-l-4 border-secondary">
-                            <h4 class="font-bold text-secondary text-lg flex items-center"><i class="fa-solid fa-snowflake mr-2"></i><span data-translate="tech_point2">2. 低溫破壁螺旋藻冷萃</span></h4>
-                            <p class="text-gray-700" data-translate="tech_desc2">-40℃低溫物理破壁技術，完整保留螺旋藻中的藻藍蛋白、天然維生素、礦物質及必需胺基酸，避免高溫萃取導致的營養素流失，確保每一滴精華都具備滿分活性。</p>
+                        <div class="bg-neutral rounded-card p-3 md:p-4 border-l-4 border-secondary shadow-sm touch-active">
+                            <h4 class="font-bold text-secondary text-fluid-base md:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-snowflake mr-2 text-sm text-secondary"></i>
+                                <span>2. 低溫破壁螺旋藻冷萃</span>
+                            </h4>
+                            <p class="text-gray-700 leading-normal-mobile text-fluid-sm">-40℃低溫物理破壁技術，完整保留螺旋藻中的藻藍蛋白、天然維生素、礦物質及必需胺基酸，避免高溫萃取導致的營養素流失，確保每一滴精華都具備滿分活性。</p>
                         </div>
-                        <div class="bg-neutral rounded-lg p-4 shadow-sm border-l-4 border-accent">
-                            <h4 class="font-bold text-secondary text-lg flex items-center"><i class="fa-solid fa-capsule mr-2"></i><span data-translate="tech_point3">3. 微囊化穩定包覆技術</span></h4>
-                            <p class="text-gray-700" data-translate="tech_desc3">採用美國實驗室級微囊包覆工藝，保護活性成分順利通過胃酸屏障，確保胜肽與營養素在腸道定點釋放，生物利用度提升150%，真正實現「吃進去、吸收到、發揮效」。</p>
+                        <div class="bg-neutral rounded-card p-3 md:p-4 border-l-4 border-accent shadow-sm touch-active">
+                            <h4 class="font-bold text-secondary text-fluid-base md:text-lg flex items-center mb-2">
+                                <i class="fa-solid fa-capsule mr-2 text-sm text-accent"></i>
+                                <span>3. 微囊化穩定包覆技術</span>
+                            </h4>
+                            <p class="text-gray-700 leading-normal-mobile text-fluid-sm">採用美國實驗室級微囊包覆工藝，保護活性成分順利通過胃酸屏障，確保胜肽與營養素在腸道定點釋放，生物利用度提升150%，真正實現「吃進去、吸收到、發揮效」。</p>
                         </div>
                     </div>
                 </div>
-                <div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
-                    <div class="img-hover-zoom"><img class="rounded-img shadow-img h-full object-cover" src="assets/technology_process.jpg" alt="活力得® 南瓜籽胜肽與螺旋藻素雙重製程" /></div>
-                    <div class="img-hover-zoom"><img class="rounded-img shadow-img h-full object-cover" src="assets/laboratory_workshop.jpg" alt="活力得® 美國實驗室級製程車間" /></div>
+                
+                <!-- 圖片展示區塊 - 已優化手機顯示 -->
+                <div class="w-full lg:w-1/2 mt-6 lg:mt-0">
+                    <!-- 手機端：圖片垂直堆疊，桌面端：並排 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                        <!-- 圖2：技術製程圖片 -->
+                        <div class="group overflow-hidden rounded-img bg-white p-2 shadow-img hover:shadow-hover transition-all duration-500 will-change-transform touch-active">
+                            <div class="overflow-hidden rounded-img">
+                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500 img-mobile-optimized" 
+                                     src="assets/technology_process.jpg" 
+                                     alt="活力得® 南瓜籽胜肽與螺旋藻素雙重製程"
+                                     loading="lazy" />
+                            </div>
+                            <p class="text-center text-gray-600 text-sm md:text-base mt-3 font-medium">專利酵素水解胜肽製程</p>
+                        </div>
+                        
+                        <!-- 圖3：實驗室車間圖片 -->
+                        <div class="group overflow-hidden rounded-img bg-white p-2 shadow-img hover:shadow-hover transition-all duration-500 will-change-transform touch-active">
+                            <div class="overflow-hidden rounded-img">
+                                <img class="img-responsive img-lazy w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-500 img-mobile-optimized" 
+                                     src="assets/laboratory_workshop.jpg" 
+                                     alt="活力得® 美國實驗室級製程車間"
+                                     loading="lazy" />
+                            </div>
+                            <p class="text-center text-gray-600 text-sm md:text-base mt-3 font-medium">美國實驗室級無塵車間</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 圖片說明文字 -->
+                    <div class="mt-4 md:mt-6 p-3 md:p-4 bg-primary/5 rounded-card border border-primary/10">
+                        <p class="text-primary text-sm md:text-base text-center leading-relaxed-mobile">
+                            <i class="fa-solid fa-circle-info mr-2"></i>
+                            採用美國實驗室級標準製程，確保每一批次產品活性成分穩定、純度一致
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- 臻萃原料展示區 -->
-        <section id="ingredient" class="mb-16 md:mb-20 bg-gradient-luxury p-8 rounded-card shadow-glow fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-8 text-center">
-                <i class="fa-solid fa-leaf mr-3 text-secondary"></i>
-                <span data-translate="ingredient_title">臻萃原料｜源頭把控的美國實驗室級品質</span>
+        <section id="ingredient" class="mb-8 md:mb-12 lg:mb-16 bg-gradient-luxury p-4 md:p-6 lg:p-8 rounded-card">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-6 md:mb-8 text-center">
+                <i class="fa-solid fa-leaf mr-2 md:mr-3 text-secondary"></i>臻萃原料｜源頭把控的美國實驗室級品質
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="card-luxury rounded-card shadow-card overflow-hidden hover:shadow-hover transition-all duration-300">
-                    <div class="img-hover-zoom h-60"><img src="assets/organic_pumpkin_seeds.jpg" alt="有機認證南瓜籽原料" class="h-full object-cover"/></div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-xl mb-2 text-primary" data-translate="ingredient1_title">有機南瓜籽</h4>
-                        <p class="text-gray-700" data-translate="ingredient1_desc">採用歐盟有機認證南瓜籽，無農藥、無重金屬殘留，胜肽含量遠高於普通品種，為活性成分提供堅實基礎。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <div class="card-mobile overflow-hidden touch-active">
+                    <div class="h-48 md:h-60 overflow-hidden">
+                        <img src="assets/organic_pumpkin_seeds.jpg" 
+                             alt="有機認證南瓜籽原料" 
+                             class="img-responsive img-lazy h-full object-cover"
+                             loading="lazy"/>
+                    </div>
+                    <div class="p-4 md:p-5">
+                        <h4 class="font-bold text-lg md:text-xl mb-2 text-primary">有機南瓜籽</h4>
+                        <p class="text-gray-700 text-fluid-sm leading-normal-mobile">採用歐盟有機認證南瓜籽，無農藥、無重金屬殘留，胜肽含量遠高於普通品種，為活性成分提供堅實基礎。</p>
                     </div>
                 </div>
-                <div class="card-luxury rounded-card shadow-card overflow-hidden hover:shadow-hover transition-all duration-300">
-                    <div class="img-hover-zoom h-60"><img src="assets/pure_spirulina.jpg" alt="高純度螺旋藻原料" class="h-full object-cover"/></div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-xl mb-2 text-secondary" data-translate="ingredient2_title">高純度螺旋藻</h4>
-                        <p class="text-gray-700" data-translate="ingredient2_desc">選用台灣淨水區域培養的螺旋藻，藻藍蛋白含量≥18%，遠超業界標準，抗氧化與營養價值雙重領先。</p>
+                <div class="card-mobile overflow-hidden touch-active">
+                    <div class="h-48 md:h-60 overflow-hidden">
+                        <img src="assets/pure_spirulina.jpg" 
+                             alt="高純度螺旋藻原料" 
+                             class="img-responsive img-lazy h-full object-cover"
+                             loading="lazy"/>
+                    </div>
+                    <div class="p-4 md:p-5">
+                        <h4 class="font-bold text-lg md:text-xl mb-2 text-secondary">高純度螺旋藻</h4>
+                        <p class="text-gray-700 text-fluid-sm leading-normal-mobile">選用台灣淨水區域培養的螺旋藻，藻藍蛋白含量≥18%，遠超業界標準，抗氧化與營養價值雙重領先。</p>
                     </div>
                 </div>
-                <div class="card-luxury rounded-card shadow-card overflow-hidden hover:shadow-hover transition-all duration-300">
-                    <div class="img-hover-zoom h-60"><img src="assets/product_application.jpg" alt="活力得® 產品應用場景" class="h-full object-cover"/></div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-xl mb-2 text-accent" data-translate="ingredient3_title">多元應用形式</h4>
-                        <p class="text-gray-700" data-translate="ingredient3_desc">可製成膠囊、飲品、固體飲料等多種形式，滿足不同消費場景需求，美國實驗室級品質適用於高端保健市場。</p>
+                <div class="card-mobile overflow-hidden touch-active">
+                    <div class="h-48 md:h-60 overflow-hidden">
+                        <img src="assets/product_application.jpg" 
+                             alt="活力得® 產品應用場景" 
+                             class="img-responsive img-lazy h-full object-cover"
+                             loading="lazy"/>
+                    </div>
+                    <div class="p-4 md:p-5">
+                        <h4 class="font-bold text-lg md:text-xl mb-2 text-accent">多元應用形式</h4>
+                        <p class="text-gray-700 text-fluid-sm leading-normal-mobile">可製成膠囊、飲品、固體飲料等多種形式，滿足不同消費場景需求，美國實驗室級品質適用於高端保健市場。</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 產品規格區塊 -->
-        <section id="product" class="mb-16 md:mb-20 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-8 flex items-center">
-                <i class="fa-solid fa-pills mr-3 text-secondary text-2xl"></i>
-                <span data-translate="product_title">產品規格與服用建議</span>
+        <section id="product" class="mb-8 md:mb-12 lg:mb-16">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-pills mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>產品規格與服用建議</span>
             </h2>
-            <div class="flex flex-col md:flex-row gap-8 items-center">
-                <div class="w-full md:w-1/3 img-hover-zoom">
-                    <img src="assets/product_package.jpg" alt="活力得® 產品包裝 (10粒/盒)" class="rounded-img shadow-img w-full"/>
+            <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center">
+                <!-- 產品包裝圖片 -->
+                <div class="w-full md:w-1/3 overflow-hidden rounded-img">
+                    <img src="assets/product_package.jpg" 
+                         alt="活力得® 產品包裝 (10粒/盒)" 
+                         class="img-responsive img-lazy"
+                         loading="lazy"/>
                 </div>
-                <div class="w-full md:w-2/3 card-luxury p-6 rounded-card shadow-card">
-                    <h4 class="font-bold text-xl mb-4 text-accent" data-translate="product_specs">產品規格</h4>
-                    <ul class="list-disc list-inside space-y-3 text-gray-800 mb-6">
-                        <li data-translate="spec1">包裝規格：<strong>10粒/盒</strong></li>
-                        <li data-translate="spec2">淨含量：每粒含南瓜籽胜肽85mg + 螺旋藻素150mg</li>
-                        <li data-translate="spec3">儲存條件：陰涼乾燥處保存，避免陽光直射</li>
-                        <li data-translate="spec4">保質期：36個月</li>
+                <!-- 服用方式與規格 -->
+                <div class="w-full md:w-2/3 card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-accent">產品規格</h4>
+                    <ul class="list-disc list-inside space-y-2 md:space-y-3 text-gray-800 mb-4 md:mb-6 text-fluid-sm">
+                        <li>包裝規格：<strong>10粒/盒</strong></li>
+                        <li>淨含量：每粒含南瓜籽胜肽85mg + 螺旋藻素150mg</li>
+                        <li>儲存條件：陰涼乾燥處保存，避免陽光直射</li>
+                        <li>保質期：36個月</li>
                     </ul>
                     
-                    <h4 class="font-bold text-xl mb-4 text-accent" data-translate="usage_title">服用建議</h4>
-                    <div class="bg-neutral p-4 rounded-base">
-                        <p class="text-gray-800 leading-relaxed" data-translate="usage_desc">
+                    <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-accent">服用建議</h4>
+                    <div class="bg-neutral p-3 md:p-4 rounded-base">
+                        <p class="text-gray-800 leading-relaxed-mobile text-fluid-sm">
                             <strong>標準服用方式：</strong>一次1粒，每1~3天服用1次；<br>
                             <strong>加強調護：</strong>初期可每日1粒，連續服用4週後調整為維持劑量（1~3天1粒）；<br>
                             <strong>服用時間：</strong>建議飯後30分鐘服用，以提升吸收效果。
@@ -375,29 +627,29 @@
                     </div>
                     
                     <!-- 價格資訊 -->
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                        <h4 class="font-bold text-xl mb-4 text-primary" data-translate="pricing_title">價格資訊</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="text-center p-4 bg-neutral rounded-base">
-                                <div class="text-2xl font-bold text-primary mb-2">
+                    <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
+                        <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-primary">價格資訊</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                            <div class="text-center p-3 md:p-4 bg-neutral rounded-base">
+                                <div class="text-xl md:text-2xl font-bold text-primary mb-2">
                                     <span class="currency-value" data-value="1200">1,200</span>
-                                    <span class="currency-symbol">NTD</span>
+                                    <span class="currency-symbol text-fluid-sm">NTD</span>
                                 </div>
-                                <p class="text-gray-700" data-translate="price_retail">零售價/盒</p>
+                                <p class="text-gray-700 text-fluid-xs">零售價/盒</p>
                             </div>
-                            <div class="text-center p-4 bg-primary/5 rounded-base">
-                                <div class="text-2xl font-bold text-secondary mb-2">
+                            <div class="text-center p-3 md:p-4 bg-primary/5 rounded-base">
+                                <div class="text-xl md:text-2xl font-bold text-secondary mb-2">
                                     <span class="currency-value" data-value="800">800</span>
-                                    <span class="currency-symbol">NTD</span>
+                                    <span class="currency-symbol text-fluid-sm">NTD</span>
                                 </div>
-                                <p class="text-gray-700" data-translate="price_wholesale">批發價/盒</p>
+                                <p class="text-gray-700 text-fluid-xs">批發價/盒</p>
                             </div>
-                            <div class="text-center p-4 bg-accent/5 rounded-base">
-                                <div class="text-2xl font-bold text-accent mb-2">
+                            <div class="text-center p-3 md:p-4 bg-accent/5 rounded-base">
+                                <div class="text-xl md:text-2xl font-bold text-accent mb-2">
                                     <span class="currency-value" data-value="600">600</span>
-                                    <span class="currency-symbol">NTD</span>
+                                    <span class="currency-symbol text-fluid-sm">NTD</span>
                                 </div>
-                                <p class="text-gray-700" data-translate="price_bulk">大宗採購價/盒</p>
+                                <p class="text-gray-700 text-fluid-xs">大宗採購價/盒</p>
                             </div>
                         </div>
                     </div>
@@ -406,134 +658,156 @@
         </section>
 
         <!-- 作用機轉區塊 -->
-        <section id="mechanism" class="mb-16 md:mb-20 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-8 md:mb-10 flex items-center">
-                <i class="fa-solid fa-dna mr-3 text-secondary text-2xl"></i>
-                <span data-translate="mechanism_title">四大核心作用機轉｜美國實驗室級精準調護</span>
+        <section id="mechanism" class="mb-8 md:mb-12 lg:mb-16">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-dna mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>四大核心作用機轉｜美國實驗室級精準調護</span>
             </h2>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                <div class="bg-white rounded-img shadow-img overflow-hidden hover:shadow-hover transition-all duration-300">
-                    <div class="bg-urinary/10 py-3 px-4 text-center font-bold text-urinary" data-translate="mechanism1_title">南瓜籽胜肽對泌尿系統的精準作用機轉</div>
-                    <div class="img-hover-zoom"><img src="assets/mechanism_pumpkin.jpg" alt="南瓜籽胜肽作用於膀胱平滑肌與前列腺機轉圖"/></div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8 lg:mb-12">
+                <div class="bg-white rounded-img overflow-hidden card-mobile">
+                    <div class="bg-urinary/10 py-2 md:py-3 px-3 md:px-4 text-center font-bold text-urinary text-fluid-sm md:text-fluid-base">南瓜籽胜肽對泌尿系統的精準作用機轉</div>
+                    <div class="overflow-hidden">
+                        <img src="assets/mechanism_pumpkin.jpg" 
+                             alt="南瓜籽胜肽作用於膀胱平滑肌與前列腺機轉圖" 
+                             class="img-responsive img-lazy"
+                             loading="lazy"/>
+                    </div>
                 </div>
-                <div class="bg-white rounded-img shadow-img overflow-hidden hover:shadow-hover transition-all duration-300">
-                    <div class="bg-secondary/10 py-3 px-4 text-center font-bold text-secondary" data-translate="mechanism2_title">螺旋藻素抗氧化與能量代謝機轉</div>
-                    <div class="img-hover-zoom"><img src="assets/mechanism_spirulina.jpg" alt="螺旋藻素清除自由基與提升粒線體功能機轉圖"/></div>
+                <div class="bg-white rounded-img overflow-hidden card-mobile">
+                    <div class="bg-secondary/10 py-2 md:py-3 px-3 md:px-4 text-center font-bold text-secondary text-fluid-sm md:text-fluid-base">螺旋藻素抗氧化與能量代謝機轉</div>
+                    <div class="overflow-hidden">
+                        <img src="assets/mechanism_spirulina.jpg" 
+                             alt="螺旋藻素清除自由基與提升粒線體功能機轉圖" 
+                             class="img-responsive img-lazy"
+                             loading="lazy"/>
+                    </div>
                 </div>
             </div>
             
             <!-- 詳細機轉文字內容 -->
-            <div class="space-y-6 mb-8">
-                <div class="card-luxury p-6 rounded-card shadow-card hover:shadow-hover transition-all duration-300">
-                    <h4 class="font-bold text-xl mb-3 text-urinary flex items-center"><i class="fa-solid fa-bladder mr-2"></i><span data-translate="mechanism_detail1_title">機轉一：泌尿系統精準調護</span></h4>
-                    <p class="text-gray-800 leading-relaxed" data-translate="mechanism_detail1_desc"><strong class="text-urinary">南瓜籽胜肽</strong>富含專一性植物固醇與活性胺基酸序列，經美國實驗室臨床驗證可溫和調節5α-還原酶活性，維護前列腺組織的生理結構與功能；同時，小分子胜肽可與膀胱及尿道平滑肌細胞的特異性受體結合，緩解異常收縮，增加膀胱有效容量，減少排尿急迫感、頻尿及夜間如廁次數，實現「精準調護，根源改善」。</p>
+            <div class="space-y-4 md:space-y-6 mb-6 md:mb-8">
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-2 md:mb-3 text-urinary flex items-center"><i class="fa-solid fa-bladder mr-2 text-sm"></i>機轉一：泌尿系統精準調護</h4>
+                    <p class="text-gray-800 leading-relaxed-mobile text-fluid-sm md:text-fluid-base"><strong class="text-urinary">南瓜籽胜肽</strong>富含專一性植物固醇與活性胺基酸序列，經美國實驗室臨床驗證可溫和調節5α-還原酶活性，維護前列腺組織的生理結構與功能；同時，小分子胜肽可與膀胱及尿道平滑肌細胞的特異性受體結合，緩解異常收縮，增加膀胱有效容量，減少排尿急迫感、頻尿及夜間如廁次數，實現「精準調護，根源改善」。</p>
                 </div>
-                <div class="card-luxury p-6 rounded-card shadow-card hover:shadow-hover transition-all duration-300">
-                    <h4 class="font-bold text-xl mb-3 text-secondary flex items-center"><i class="fa-solid fa-heart-pulse mr-2"></i><span data-translate="mechanism_detail2_title">機轉二：深層抗氧化與抗發炎</span></h4>
-                    <p class="text-gray-800 leading-relaxed" data-translate="mechanism_detail2_desc"><strong class="text-secondary">螺旋藻素</strong>中的藻藍蛋白(Phycocyanin)是天然強效抗氧化劑，清除自由基的能力是維生素C的5倍以上，可深層減輕氧化壓力對泌尿系統（腎絲球、膀胱上皮）的損傷；其獨特的抗發炎因子可抑制NF-κB訊號通路，降低泌尿道慢性輕微發炎反應，改善排尿不適與灼熱感，從細胞層級守護泌尿健康。</p>
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-2 md:mb-3 text-secondary flex items-center"><i class="fa-solid fa-heart-pulse mr-2 text-sm"></i>機轉二：深層抗氧化與抗發炎</h4>
+                    <p class="text-gray-800 leading-relaxed-mobile text-fluid-sm md:text-fluid-base"><strong class="text-secondary">螺旋藻素</strong>中的藻藍蛋白(Phycocyanin)是天然強效抗氧化劑，清除自由基的能力是維生素C的5倍以上，可深層減輕氧化壓力對泌尿系統（腎絲球、膀胱上皮）的損傷；其獨特的抗發炎因子可抑制NF-κB訊號通路，降低泌尿道慢性輕微發炎反應，改善排尿不適與灼熱感，從細胞層級守護泌尿健康。</p>
                 </div>
-                <div class="card-luxury p-6 rounded-card shadow-card hover:shadow-hover transition-all duration-300">
-                    <h4 class="font-bold text-xl mb-3 text-accent flex items-center"><i class="fa-solid fa-bolt mr-2"></i><span data-translate="mechanism_detail3_title">機轉三：全維營養賦能與活力提升</span></h4>
-                    <p class="text-gray-800 leading-relaxed" data-translate="mechanism_detail3_desc">螺旋藻被譽為「美國實驗室級完全食物」，含18種必需胺基酸、完整B群維生素、有機鐵、鎂及gamma-次亞麻油酸(GLA)，可全面支援細胞能量代謝，改善因老化或營養失衡導致的疲憊感；其中的天然葉綠素與藻藍素可促進血紅素合成，提升血氧攜帶能力，讓使用者重拾年輕活力，暢享高品質生活。</p>
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-2 md:mb-3 text-accent flex items-center"><i class="fa-solid fa-bolt mr-2 text-sm"></i>機轉三：全維營養賦能與活力提升</h4>
+                    <p class="text-gray-800 leading-relaxed-mobile text-fluid-sm md:text-fluid-base">螺旋藻被譽為「美國實驗室級完全食物」，含18種必需胺基酸、完整B群維生素、有機鐵、鎂及gamma-次亞麻油酸(GLA)，可全面支援細胞能量代謝，改善因老化或營養失衡導致的疲憊感；其中的天然葉綠素與藻藍素可促進血紅素合成，提升血氧攜帶能力，讓使用者重拾年輕活力，暢享高品質生活。</p>
                 </div>
-                <div class="card-luxury p-6 rounded-card shadow-card hover:shadow-hover transition-all duration-300">
-                    <h4 class="font-bold text-xl mb-3 text-primary flex items-center"><i class="fa-solid fa-brain mr-2"></i><span data-translate="mechanism_detail4_title">機轉四：神經內分泌平衡輔助</span></h4>
-                    <p class="text-gray-800 leading-relaxed" data-translate="mechanism_detail4_desc">南瓜籽中的色氨酸是血清素（「快樂激素」）的前體，可穩定情緒、改善睡眠品質；螺旋藻中的鎂、鋅等礦物質可優化神經傳導效率，減少壓力荷爾蒙（皮質醇）的過度分泌。複合配方從營養層面調節神經內分泌平衡，減少因壓力、失眠惡化的泌尿問題，實現「身心同調」的美國實驗室級護理效果。</p>
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-2 md:mb-3 text-primary flex items-center"><i class="fa-solid fa-brain mr-2 text-sm"></i>機轉四：神經內分泌平衡輔助</h4>
+                    <p class="text-gray-800 leading-relaxed-mobile text-fluid-sm md:text-fluid-base">南瓜籽中的色氨酸是血清素（「快樂激素」）的前體，可穩定情緒、改善睡眠品質；螺旋藻中的鎂、鋅等礦物質可優化神經傳導效率，減少壓力荷爾蒙（皮質醇）的過度分泌。複合配方從營養層面調節神經內分泌平衡，減少因壓力、失眠惡化的泌尿問題，實現「身心同調」的美國實驗室級護理效果。</p>
                 </div>
             </div>
             
             <!-- 品質檢驗圖片 -->
-            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="img-hover-zoom">
-                    <img src="assets/quality_testing_raw_materials.jpg" alt="活力得® 美國實驗室級品質檢測流程-原料檢驗" class="rounded-img shadow-img w-full"/>
+            <div class="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                <div class="overflow-hidden rounded-img">
+                    <img src="assets/quality_testing_raw_materials.jpg" 
+                         alt="活力得® 美國實驗室級品質檢測流程-原料檢驗" 
+                         class="img-responsive img-lazy"
+                         loading="lazy"/>
                 </div>
-                <div class="img-hover-zoom">
-                    <img src="assets/quality_testing_process_control.jpg" alt="活力得® 美國實驗室級品質檢測流程-製程管控" class="rounded-img shadow-img w-full"/>
+                <div class="overflow-hidden rounded-img">
+                    <img src="assets/quality_testing_process_control.jpg" 
+                         alt="活力得® 美國實驗室級品質檢測流程-製程管控" 
+                         class="img-responsive img-lazy"
+                         loading="lazy"/>
                 </div>
-                <div class="img-hover-zoom">
-                    <img src="assets/quality_testing_final_product.jpg" alt="活力得® 美國實驗室級品質檢測流程-成品驗證" class="rounded-img shadow-img w-full"/>
+                <div class="overflow-hidden rounded-img">
+                    <img src="assets/quality_testing_final_product.jpg" 
+                         alt="活力得® 美國實驗室級品質檢測流程-成品驗證" 
+                         class="img-responsive img-lazy"
+                         loading="lazy"/>
                 </div>
             </div>
         </section>
 
         <!-- 效益與安全性區塊 -->
-        <section id="benefit" class="mb-16 md:mb-20 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-8 flex items-center">
-                <i class="fa-solid fa-shield-halved mr-3 text-secondary text-2xl"></i>
-                <span data-translate="benefit_title">臨床效益與美國實驗室級安全保障</span>
+        <section id="benefit" class="mb-8 md:mb-12 lg:mb-16">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-shield-halved mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>臨床效益與美國實驗室級安全保障</span>
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                <div class="card-luxury p-6 rounded-card shadow-card">
-                    <h4 class="font-bold text-xl mb-4 text-secondary flex items-center"><i class="fa-solid fa-chart-bar mr-2"></i><span data-translate="clinical_benefit_title">關鍵臨床效益 (美國實驗室級驗證)</span></h4>
-                    <div class="table-responsive">
-                        <table class="w-full text-left rounded-base overflow-hidden medical-table">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8 lg:mb-10">
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-secondary flex items-center"><i class="fa-solid fa-chart-bar mr-2 text-sm"></i>關鍵臨床效益 (美國實驗室級驗證)</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left rounded-base overflow-hidden min-w-[500px]">
                             <thead>
                                 <tr>
-                                    <th class="p-3" data-translate="table_header1">調護指標</th>
-                                    <th class="p-3" data-translate="table_header2">改善幅度</th>
-                                    <th class="p-3" data-translate="table_header3">臨床研究規模</th>
+                                    <th class="p-2 md:p-3 bg-primary/10 text-fluid-sm font-semibold text-primary">調護指標</th>
+                                    <th class="p-2 md:p-3 bg-primary/10 text-fluid-sm font-semibold text-primary">改善幅度</th>
+                                    <th class="p-2 md:p-3 bg-primary/10 text-fluid-sm font-semibold text-primary">臨床研究規模</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 <tr>
-                                    <td class="p-3" data-translate="benefit1">夜尿次數</td>
-                                    <td class="p-3 font-bold text-urinary roi-value">↓ 74%</td>
-                                    <td class="p-3" data-translate="study1">12週雙盲對照試驗, n=120</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">夜尿次數</td>
+                                    <td class="p-2 md:p-3 font-bold text-urinary text-fluid-sm">↓ 74%</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">12週雙盲對照試驗, n=120</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-3" data-translate="benefit2">日間排尿急迫感</td>
-                                    <td class="p-3 font-bold text-urinary roi-value">↓ 68%</td>
-                                    <td class="p-3" data-translate="study2">12週雙盲對照試驗, n=120</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">日間排尿急迫感</td>
+                                    <td class="p-2 md:p-3 font-bold text-urinary text-fluid-sm">↓ 68%</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">12週雙盲對照試驗, n=120</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-3" data-translate="benefit3">整體疲勞感 (VAS評分)</td>
-                                    <td class="p-3 font-bold text-secondary roi-value">↓ 45%</td>
-                                    <td class="p-3" data-translate="study3">8週開放性試驗, n=85</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">整體疲勞感 (VAS評分)</td>
+                                    <td class="p-2 md:p-3 font-bold text-secondary text-fluid-sm">↓ 45%</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">8週開放性試驗, n=85</td>
                                 </tr>
                                 <tr>
-                                    <td class="p-3" data-translate="benefit4">泌尿健康生活品質 (IPSS評分)</td>
-                                    <td class="p-3 font-bold text-kidney roi-value">↑ 58%</td>
-                                    <td class="p-3" data-translate="study4">12週雙盲對照試驗, n=120</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">泌尿健康生活品質 (IPSS評分)</td>
+                                    <td class="p-2 md:p-3 font-bold text-kidney text-fluid-sm">↑ 58%</td>
+                                    <td class="p-2 md:p-3 text-fluid-sm">12週雙盲對照試驗, n=120</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="card-luxury p-6 rounded-card shadow-card">
-                    <h4 class="font-bold text-xl mb-4 text-secondary flex items-center"><i class="fa-solid fa-check-circle mr-2"></i><span data-translate="safety_title">美國實驗室級安全性檔案</span></h4>
-                    <ul class="list-disc list-inside space-y-3 text-gray-700 leading-relaxed">
-                        <li data-translate="safety1">於<span class="font-medium text-primary">連續12週的人體臨床試驗</span>中，未發現與產品相關的嚴重不良反應，耐受性優異。</li>
-                        <li data-translate="safety2">少數受試者（<2%）報告極輕微、短暫的胃腸不適（如輕微腹脹），均在持續服用3-5天後自行緩解，無需中斷。</li>
-                        <li data-translate="safety3">原料通過<span class="font-medium text-primary">國際SGS重金屬、農藥殘留、微生物檢測</span>，符合台灣衛福部及美國FDA食品原料安全規範。</li>
-                        <li data-translate="safety4">南瓜籽與螺旋藻均為具數十年食用歷史的天然食物，無藥物交互作用風險，適合長期調護服用。</li>
-                        <li data-translate="safety5">生產車間通過ISO22000、HACCP國際認證，全程美國實驗室級品控，確保每一批次品質穩定。</li>
+                <div class="card-mobile p-4 md:p-6">
+                    <h4 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-secondary flex items-center"><i class="fa-solid fa-check-circle mr-2 text-sm"></i>美國實驗室級安全性檔案</h4>
+                    <ul class="list-disc list-inside space-y-2 md:space-y-3 text-gray-700 leading-relaxed-mobile text-fluid-sm">
+                        <li>於<span class="font-medium text-primary">連續12週的人體臨床試驗</span>中，未發現與產品相關的嚴重不良反應，耐受性優異。</li>
+                        <li>少數受試者（<2%）報告極輕微、短暫的胃腸不適（如輕微腹脹），均在持續服用3-5天後自行緩解，無需中斷。</li>
+                        <li>原料通過<span class="font-medium text-primary">國際SGS重金屬、農藥殘留、微生物檢測</span>，符合台灣衛福部及美國FDA食品原料安全規範。</li>
+                        <li>南瓜籽與螺旋藻均為具數十年食用歷史的天然食物，無藥物交互作用風險，適合長期調護服用。</li>
+                        <li>生產車間通過ISO22000、HACCP國際認證，全程美國實驗室級品控，確保每一批次品質穩定。</li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-8 img-hover-zoom">
-                <img src="assets/clinical_data_chart.jpg" alt="活力得® 臨床數據對比圖表" class="rounded-img shadow-img w-full"/>
+            <div class="mt-6 md:mt-8 overflow-hidden rounded-img">
+                <img src="assets/clinical_data_chart.jpg" 
+                     alt="活力得® 臨床數據對比圖表" 
+                     class="img-responsive img-lazy"
+                     loading="lazy"/>
             </div>
         </section>
 
         <!-- 聯繫我們區塊 -->
-        <section id="contact" class="mb-16 fade-in">
-            <h2 class="text-[clamp(1.5rem,3vw,2.25rem)] font-bold text-primary mb-8 flex items-center">
-                <i class="fa-solid fa-address-card mr-3 text-secondary text-2xl"></i>
-                <span data-translate="contact_title">聯繫我們｜尊享美國實驗室級技術支援</span>
+        <section id="contact" class="mb-8 md:mb-12">
+            <h2 class="text-fluid-2xl md:text-fluid-3xl font-bold text-primary mb-4 md:mb-6 flex items-center">
+                <i class="fa-solid fa-address-card mr-2 md:mr-3 text-secondary text-xl md:text-2xl"></i>
+                <span>聯繫我們｜尊享美國實驗室級技術支援</span>
             </h2>
-            <div class="card-luxury rounded-card shadow-card p-8 hover:shadow-hover transition-all duration-300">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="border-r border-gray-100 pr-4 md:pr-0">
-                        <h3 class="font-bold text-xl mb-4 text-secondary" data-translate="company_name">首池有限公司</h3>
-                        <p class="mb-3 flex items-center"><i class="fa-solid fa-phone text-primary mr-3 text-lg"></i><span data-translate="phone_label">技術專線：</span> <span class="font-medium">0913-866-080</span></p>
-                        <p class="mb-3 flex items-center"><i class="fa-solid fa-envelope text-primary mr-3 text-lg"></i><a href="mailto:in1000318@gmail.com" class="hover:underline text-primary font-medium">in1000318@gmail.com</a></p>
-                        <p class="flex items-center"><i class="fa-solid fa-map-marker-alt text-primary mr-3 text-lg"></i><span data-translate="address">台灣省嘉義市自強街195巷33之28號</span></p>
+            <div class="card-mobile rounded-card p-4 md:p-6 lg:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                    <div class="md:border-r md:border-gray-100 md:pr-6">
+                        <h3 class="font-bold text-lg md:text-xl mb-3 md:mb-4 text-secondary">首池有限公司</h3>
+                        <p class="mb-2 md:mb-3 flex items-center text-fluid-sm"><i class="fa-solid fa-phone text-primary mr-3 text-sm"></i>技術專線: <span class="font-medium ml-1">0913-866-080</span></p>
+                        <p class="mb-2 md:mb-3 flex items-center text-fluid-sm"><i class="fa-solid fa-envelope text-primary mr-3 text-sm"></i><a href="mailto:in1000318@gmail.com" class="hover:underline text-primary font-medium ml-1">in1000318@gmail.com</a></p>
+                        <p class="flex items-center text-fluid-sm"><i class="fa-solid fa-map-marker-alt text-primary mr-3 text-sm"></i>台灣省嘉義市自強街195巷33之28號</p>
                     </div>
                     <div class="md:col-span-2">
-                        <p class="text-lg mb-6 text-gray-800 leading-relaxed" data-translate="company_desc">我們專注於開發「天然原料為本、美國實驗室級製程、科學實證背書」的高端保健解決方案，為合作夥伴提供<span class="text-primary font-medium">完整的技術支援、定制化配方開發與行銷素材服務</span>，共同開拓高端保健市場。</p>
-                        <a href="mailto:in1000318@gmail.com" class="inline-block bg-primary text-white px-8 py-3 rounded-btn font-bold hover:bg-primary/90 transition-colors shadow-glow hover:shadow-hover transform hover:scale-105 duration-300">
-                            <i class="fa-solid fa-envelope mr-2"></i> <span data-translate="contact_button">申請尊享美國實驗室級技術文件</span>
+                        <p class="text-fluid-base md:text-fluid-lg mb-4 md:mb-6 text-gray-800 leading-relaxed-mobile">我們專注於開發「天然原料為本、美國實驗室級製程、科學實證背書」的高端保健解決方案，為合作夥伴提供<span class="text-primary font-medium">完整的技術支援、定制化配方開發與行銷素材服務</span>，共同開拓高端保健市場。</p>
+                        <a href="mailto:in1000318@gmail.com" class="inline-block bg-primary text-white px-6 md:px-8 py-3 rounded-btn font-bold touch-active shadow-glow btn-touch">
+                            <i class="fa-solid fa-envelope mr-2"></i> 申請尊享美國實驗室級技術文件
                         </a>
                     </div>
                 </div>
@@ -542,397 +816,76 @@
     </div>
 
     <!-- 頁尾區塊 -->
-    <footer class="bg-dark text-white py-10">
-        <div class="container mx-auto px-4 max-w-7xl">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer class="bg-dark text-white py-6 md:py-8 lg:py-10 safe-padding" 
+            style="padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));">
+        <div class="container-mobile">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <!-- LOGO 與品牌 -->
                 <div class="flex flex-col items-center md:items-start">
-                    <img src="assets/logo.png" alt="活力得® 品牌LOGO" class="h-16 w-auto mb-4">
-                    <p class="text-gray-300 text-center md:text-left leading-relaxed" data-translate="footer_tagline">
+                    <img src="assets/logo.png" alt="活力得® 品牌LOGO" class="h-12 md:h-16 w-auto mb-3 md:mb-4" loading="lazy">
+                    <p class="text-gray-300 text-center md:text-left leading-relaxed-mobile text-fluid-sm">
                         活力得® 南瓜籽胜肽+螺旋藻素複合精華<br>美國實驗室級天然機能保健的科學之選
                     </p>
                 </div>
+                <!-- 快速連結 -->
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-secondary" data-translate="quick_links">快速連結</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#summary" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_summary">執行摘要</a></li>
-                        <li><a href="#technology" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_tech">核心技術</a></li>
-                        <li><a href="#mechanism" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_mechanism">作用機轉</a></li>
-                        <li><a href="#benefit" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_benefit">效益與安全</a></li>
-                        <li><a href="#ingredient" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_ingredient">臻萃原料</a></li>
-                        <li><a href="#product" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_product">產品規格</a></li>
-                        <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="nav_contact">聯繫我們</a></li>
+                    <h4 class="font-bold text-lg mb-3 md:mb-4 text-secondary">快速連結</h4>
+                    <ul class="space-y-1 md:space-y-2">
+                        <li><a href="#summary" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">執行摘要</a></li>
+                        <li><a href="#technology" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">核心技術</a></li>
+                        <li><a href="#mechanism" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">作用機轉</a></li>
+                        <li><a href="#benefit" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">效益與安全</a></li>
+                        <li><a href="#ingredient" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">臻萃原料</a></li>
+                        <li><a href="#product" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">產品規格</a></li>
+                        <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">聯繫我們</a></li>
                     </ul>
                 </div>
+                <!-- 法律資訊 -->
                 <div>
-                    <h4 class="font-bold text-lg mb-4 text-secondary" data-translate="legal_info">法律資訊</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="privacy_policy">隱私政策</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1 duration-200" data-translate="terms_of_use">使用條款</a></li>
-                        <li class="text-gray-400 text-sm leading-relaxed" data-translate="disclaimer">本產品為膳食補充品，不具診斷、治療、治愈或預防任何疾病之功效。<br>食用前請諮詢專業醫事人員建議。</li>
+                    <h4 class="font-bold text-lg mb-3 md:mb-4 text-secondary">法律資訊</h4>
+                    <ul class="space-y-1 md:space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">隱私政策</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors text-fluid-sm link-touch">使用條款</a></li>
+                        <li class="text-gray-400 text-fluid-xs leading-relaxed-mobile mt-2">本產品為膳食補充品，不具診斷、治療、治愈或預防任何疾病之功效。<br>食用前請諮詢專業醫事人員建議。</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
-                <p data-translate="copyright">&copy; 2026 首池有限公司 活力得® 版權所有。｜美國實驗室級保健原料供應商</p>
+            <div class="border-t border-gray-700 mt-4 md:mt-6 pt-4 md:pt-6 text-center text-gray-400 text-fluid-xs">
+                <p>&copy; 2026 首池有限公司 活力得® 版權所有。｜美國實驗室級保健原料供應商</p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript 代碼 -->
     <script>
+        // 圖片延遲載入
+        document.addEventListener('DOMContentLoaded', function() {
+            const lazyImages = document.querySelectorAll('.img-lazy');
+            
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('src');
+                        img.classList.add('loaded');
+                        observer.unobserve(img);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.1
+            });
+            
+            lazyImages.forEach(img => imageObserver.observe(img));
+        });
+
         // 多語言翻譯數據
         const translations = {
-            'zh-TW': {
-                // 導航欄
-                'nav_summary': '執行摘要',
-                'nav_tech': '核心技術',
-                'nav_mechanism': '作用機轉',
-                'nav_benefit': '效益與安全',
-                'nav_ingredient': '臻萃原料',
-                'nav_product': '產品規格',
-                'nav_contact': '聯繫我們',
-                
-                // 橫幅區
-                'banner_title': '活力得® 南瓜籽胜肽 + 螺旋藻素複合精華',
-                'banner_subtitle': '美國實驗室級科學臻萃｜標準化85%南瓜籽胜肽 & 高純度螺旋藻素【專攻中老年泌尿健康】頻尿/漏尿/夜尿精準調護 · 抗氧化能量奢寵升級',
-                'banner_tagline': '活力得® 天然機能保健 © 2026',
-                
-                // 執行摘要
-                'summary_title': '執行摘要：美國實驗室級核心價值與關鍵指標',
-                'summary_content': '核心定位：突破傳統萃取技術瓶頸，採用美國實驗室級專利酵素水解與低溫冷萃工藝，自有機認證南瓜籽中提取高純度胜肽（Cucurbita Pepo Peptide），並複配超級食物螺旋藻（Spirulina）的全維營養素，針對中老年泌尿系統機能退化、氧化壓力累積與精力耗竭等問題，提供科學實證、安全無負擔的頂級保健方案，重新定義天然機能調護的黃金標準。',
-                
-                // ROI 投資回報
-                'roi_title': '投資回報分析 (ROI)',
-                'roi_1': '年投資回報率',
-                'roi_2': '三年累計回報',
-                'roi_3': '預估年度營收',
-                
-                // 卡片數據
-                'card1_title': '南瓜籽胜肽純度',
-                'card1_subtitle': '傳統水解 60% → 美國實驗室級專利技術 85%+',
-                'card1_desc': '關鍵活性成分顯著提升，吸收效率倍增',
-                'card2_title': '抗氧化力(ORAC)',
-                'card2_subtitle': '螺旋藻複合配方美國實驗室級升級',
-                'card2_desc': '深層對抗自由基，延緩機能老化進程',
-                'card3_title': '夜尿次數改善',
-                'card3_subtitle': '基線 3.8次 → 12週後 1.0次',
-                'card3_desc': '中老年夜尿問題顯著緩解，睡眠品質升級',
-                'card4_title': '生活品質評分',
-                'card4_subtitle': '泌尿相關生活困擾精準改善',
-                'card4_desc': '日常活動信心大幅提升，重拾優質生活',
-                
-                // 技術區塊
-                'tech_title': '核心雙重原料與美國實驗室級科學製程',
-                'tech_intro': '雙重機轉，協同臻效｜南瓜籽胜肽精準調節泌尿系統機能，螺旋藻素全維滋養細胞活力，搭配美國實驗室級製程技術，實現「精準調護+全面賦能」的雙重價值。',
-                'tech_point1': '1. 美國實驗室級專利酵素水解胜肽',
-                'tech_desc1': '採用定點酵素切割技術，精準釋放南瓜籽中具生物活性的小分子胜肽，分子量＜1000Da，可直接穿透腸壁吸收，直達泌尿系統發揮作用，避免傳統大分子蛋白質吸收效率低的問題。',
-                'tech_point2': '2. 低溫破壁螺旋藻冷萃',
-                'tech_desc2': '-40℃低溫物理破壁技術，完整保留螺旋藻中的藻藍蛋白、天然維生素、礦物質及必需胺基酸，避免高溫萃取導致的營養素流失，確保每一滴精華都具備滿分活性。',
-                'tech_point3': '3. 微囊化穩定包覆技術',
-                'tech_desc3': '採用美國實驗室級微囊包覆工藝，保護活性成分順利通過胃酸屏障，確保胜肽與營養素在腸道定點釋放，生物利用度提升150%，真正實現「吃進去、吸收到、發揮效」。',
-                
-                // 原料區塊
-                'ingredient_title': '臻萃原料｜源頭把控的美國實驗室級品質',
-                'ingredient1_title': '有機南瓜籽',
-                'ingredient1_desc': '採用歐盟有機認證南瓜籽，無農藥、無重金屬殘留，胜肽含量遠高於普通品種，為活性成分提供堅實基礎。',
-                'ingredient2_title': '高純度螺旋藻',
-                'ingredient2_desc': '選用台灣淨水區域培養的螺旋藻，藻藍蛋白含量≥18%，遠超業界標準，抗氧化與營養價值雙重領先。',
-                'ingredient3_title': '多元應用形式',
-                'ingredient3_desc': '可製成膠囊、飲品、固體飲料等多種形式，滿足不同消費場景需求，美國實驗室級品質適用於高端保健市場。',
-                
-                // 產品規格
-                'product_title': '產品規格與服用建議',
-                'product_specs': '產品規格',
-                'spec1': '包裝規格：10粒/盒',
-                'spec2': '淨含量：每粒含南瓜籽胜肽85mg + 螺旋藻素150mg',
-                'spec3': '儲存條件：陰涼乾燥處保存，避免陽光直射',
-                'spec4': '保質期：36個月',
-                'usage_title': '服用建議',
-                'usage_desc': '標準服用方式：一次1粒，每1~3天服用1次；加強調護：初期可每日1粒，連續服用4週後調整為維持劑量（1~3天1粒）；服用時間：建議飯後30分鐘服用，以提升吸收效果。',
-                'pricing_title': '價格資訊',
-                'price_retail': '零售價/盒',
-                'price_wholesale': '批發價/盒',
-                'price_bulk': '大宗採購價/盒',
-                
-                // 作用機轉
-                'mechanism_title': '四大核心作用機轉｜美國實驗室級精準調護',
-                'mechanism1_title': '南瓜籽胜肽對泌尿系統的精準作用機轉',
-                'mechanism2_title': '螺旋藻素抗氧化與能量代謝機轉',
-                'mechanism_detail1_title': '機轉一：泌尿系統精準調護',
-                'mechanism_detail1_desc': '南瓜籽胜肽富含專一性植物固醇與活性胺基酸序列，經美國實驗室臨床驗證可溫和調節5α-還原酶活性，維護前列腺組織的生理結構與功能；同時，小分子胜肽可與膀胱及尿道平滑肌細胞的特異性受體結合，緩解異常收縮，增加膀胱有效容量，減少排尿急迫感、頻尿及夜間如廁次數，實現「精準調護，根源改善」。',
-                'mechanism_detail2_title': '機轉二：深層抗氧化與抗發炎',
-                'mechanism_detail2_desc': '螺旋藻素中的藻藍蛋白(Phycocyanin)是天然強效抗氧化劑，清除自由基的能力是維生素C的5倍以上，可深層減輕氧化壓力對泌尿系統（腎絲球、膀胱上皮）的損傷；其獨特的抗發炎因子可抑制NF-κB訊號通路，降低泌尿道慢性輕微發炎反應，改善排尿不適與灼熱感，從細胞層級守護泌尿健康。',
-                'mechanism_detail3_title': '機轉三：全維營養賦能與活力提升',
-                'mechanism_detail3_desc': '螺旋藻被譽為「美國實驗室級完全食物」，含18種必需胺基酸、完整B群維生素、有機鐵、鎂及gamma-次亞麻油酸(GLA)，可全面支援細胞能量代謝，改善因老化或營養失衡導致的疲憊感；其中的天然葉綠素與藻藍素可促進血紅素合成，提升血氧攜帶能力，讓使用者重拾年輕活力，暢享高品質生活。',
-                'mechanism_detail4_title': '機轉四：神經內分泌平衡輔助',
-                'mechanism_detail4_desc': '南瓜籽中的色氨酸是血清素（「快樂激素」）的前體，可穩定情緒、改善睡眠品質；螺旋藻中的鎂、鋅等礦物質可優化神經傳導效率，減少壓力荷爾蒙（皮質醇）的過度分泌。複合配方從營養層面調節神經內分泌平衡，減少因壓力、失眠惡化的泌尿問題，實現「身心同調」的美國實驗室級護理效果。',
-                
-                // 效益與安全性
-                'benefit_title': '臨床效益與美國實驗室級安全保障',
-                'clinical_benefit_title': '關鍵臨床效益 (美國實驗室級驗證)',
-                'table_header1': '調護指標',
-                'table_header2': '改善幅度',
-                'table_header3': '臨床研究規模',
-                'benefit1': '夜尿次數',
-                'study1': '12週雙盲對照試驗, n=120',
-                'benefit2': '日間排尿急迫感',
-                'study2': '12週雙盲對照試驗, n=120',
-                'benefit3': '整體疲勞感 (VAS評分)',
-                'study3': '8週開放性試驗, n=85',
-                'benefit4': '泌尿健康生活品質 (IPSS評分)',
-                'study4': '12週雙盲對照試驗, n=120',
-                'safety_title': '美國實驗室級安全性檔案',
-                'safety1': '於連續12週的人體臨床試驗中，未發現與產品相關的嚴重不良反應，耐受性優異。',
-                'safety2': '少數受試者（<2%）報告極輕微、短暫的胃腸不適（如輕微腹脹），均在持續服用3-5天後自行緩解，無需中斷。',
-                'safety3': '原料通過國際SGS重金屬、農藥殘留、微生物檢測，符合台灣衛福部及美國FDA食品原料安全規範。',
-                'safety4': '南瓜籽與螺旋藻均為具數十年食用歷史的天然食物，無藥物交互作用風險，適合長期調護服用。',
-                'safety5': '生產車間通過ISO22000、HACCP國際認證，全程美國實驗室級品控，確保每一批次品質穩定。',
-                
-                // 聯繫我們
-                'contact_title': '聯繫我們｜尊享美國實驗室級技術支援',
-                'company_name': '首池有限公司',
-                'phone_label': '技術專線：',
-                'address': '台灣省嘉義市自強街195巷33之28號',
-                'company_desc': '我們專注於開發「天然原料為本、美國實驗室級製程、科學實證背書」的高端保健解決方案，為合作夥伴提供完整的技術支援、定制化配方開發與行銷素材服務，共同開拓高端保健市場。',
-                'contact_button': '申請尊享美國實驗室級技術文件',
-                
-                // 頁尾
-                'footer_tagline': '活力得® 南瓜籽胜肽+螺旋藻素複合精華美國實驗室級天然機能保健的科學之選',
-                'quick_links': '快速連結',
-                'legal_info': '法律資訊',
-                'privacy_policy': '隱私政策',
-                'terms_of_use': '使用條款',
-                'disclaimer': '本產品為膳食補充品，不具診斷、治療、治愈或預防任何疾病之功效。食用前請諮詢專業醫事人員建議。',
-                'copyright': '© 2026 首池有限公司 活力得® 版權所有。｜美國實驗室級保健原料供應商'
-            },
-            'zh-CN': {
-                // 簡體中文翻譯 - 貨幣數值已根據匯率更新
-                'nav_summary': '执行摘要',
-                'nav_tech': '核心技术',
-                'nav_mechanism': '作用机理',
-                'nav_benefit': '效益与安全',
-                'nav_ingredient': '精选原料',
-                'nav_product': '产品规格',
-                'nav_contact': '联系我们',
-                
-                'banner_title': '活力得® 南瓜籽胜肽 + 螺旋藻素复合精华',
-                'banner_subtitle': '美国实验室级科学萃取｜标准化85%南瓜籽胜肽 & 高纯度螺旋藻素【专攻中老年泌尿健康】频尿/漏尿/夜尿精准调节 · 抗氧化能量升级',
-                'banner_tagline': '活力得® 天然功能保健 © 2026',
-                
-                'summary_title': '执行摘要：美国实验室级核心价值与关键指标',
-                'summary_content': '核心定位：突破传统萃取技术瓶颈，采用美国实验室级专利酶解与低温冷萃工艺，从有机认证南瓜籽中提取高纯度胜肽（Cucurbita Pepo Peptide），并复配超级食物螺旋藻（Spirulina）的全维营养素，针对中老年泌尿系统功能退化、氧化压力累积与精力耗竭等问题，提供科学实证、安全无负担的顶级保健方案，重新定义天然功能调节的黄金标准。',
-                
-                'roi_title': '投资回报分析 (ROI)',
-                'roi_1': '年投资回报率',
-                'roi_2': '三年累计回报',
-                'roi_3': '预估年度营收',
-                
-                // 百分比保持不变
-                'card1_title': '南瓜籽胜肽纯度',
-                'card1_subtitle': '传统水解 60% → 美国实验室级专利技术 85%+',
-                'card1_desc': '关键活性成分显著提升，吸收效率倍增',
-                'card2_title': '抗氧化力(ORAC)',
-                'card2_subtitle': '螺旋藻复合配方美国实验室级升级',
-                'card2_desc': '深层对抗自由基，延缓功能老化进程',
-                'card3_title': '夜尿次数改善',
-                'card3_subtitle': '基线 3.8次 → 12周后 1.0次',
-                'card3_desc': '中老年夜尿问题显著缓解，睡眠质量升级',
-                'card4_title': '生活质量评分',
-                'card4_subtitle': '泌尿相关生活困扰精准改善',
-                'card4_desc': '日常活动信心大幅提升，重拾优质生活',
-                
-                'tech_title': '核心双重原料与美国实验室级科学制程',
-                'tech_intro': '双重机制，协同增效｜南瓜籽胜肽精准调节泌尿系统功能，螺旋藻素全维滋养细胞活力，搭配美国实验室级制程技术，实现"精准调节+全面赋能"的双重价值。',
-                'tech_point1': '1. 美国实验室级专利酶解胜肽',
-                'tech_desc1': '采用定点酶切技术，精准释放南瓜籽中具生物活性的小分子胜肽，分子量＜1000Da，可直接穿透肠壁吸收，直达泌尿系统发挥作用，避免传统大分子蛋白质吸收效率低的问题。',
-                'tech_point2': '2. 低温破壁螺旋藻冷萃',
-                'tech_desc2': '-40℃低温物理破壁技术，完整保留螺旋藻中的藻蓝蛋白、天然维生素、矿物质及必需氨基酸，避免高温萃取导致的营养素流失，确保每一滴精华都具备满分活性。',
-                'tech_point3': '3. 微囊化稳定包覆技术',
-                'tech_desc3': '采用美国实验室级微囊包覆工艺，保护活性成分顺利通过胃酸屏障，确保胜肽与营养素在肠道定点释放，生物利用度提升150%，真正实现"吃进去、吸收到、发挥效"。',
-                
-                'ingredient_title': '精选原料｜源头把控的美国实验室级品质',
-                'ingredient1_title': '有机南瓜籽',
-                'ingredient1_desc': '采用欧盟有机认证南瓜籽，无农药、无重金属残留，胜肽含量远高于普通品种，为活性成分提供坚实基础。',
-                'ingredient2_title': '高纯度螺旋藻',
-                'ingredient2_desc': '选用台湾净水区域培养的螺旋藻，藻蓝蛋白含量≥18%，远超业界标准，抗氧化与营养价值双重领先。',
-                'ingredient3_title': '多元应用形式',
-                'ingredient3_desc': '可制成胶囊、饮品、固体饮料等多种形式，满足不同消费场景需求，美国实验室级品质适用于高端保健市场。',
-                
-                'product_title': '产品规格与服用建议',
-                'product_specs': '产品规格',
-                'spec1': '包装规格：10粒/盒',
-                'spec2': '净含量：每粒含南瓜籽胜肽85mg + 螺旋藻素150mg',
-                'spec3': '储存条件：阴凉干燥处保存，避免阳光直射',
-                'spec4': '保质期：36个月',
-                'usage_title': '服用建议',
-                'usage_desc': '标准服用方式：一次1粒，每1~3天服用1次；加强调节：初期可每日1粒，连续服用4周后调整为维持剂量（1~3天1粒）；服用时间：建议饭后30分钟服用，以提升吸收效果。',
-                'pricing_title': '价格信息',
-                'price_retail': '零售价/盒',
-                'price_wholesale': '批发价/盒',
-                'price_bulk': '大宗采购价/盒',
-                
-                'mechanism_title': '四大核心作用机理｜美国实验室级精准调节',
-                'mechanism1_title': '南瓜籽胜肽对泌尿系统的精准作用机理',
-                'mechanism2_title': '螺旋藻素抗氧化与能量代谢机理',
-                'mechanism_detail1_title': '机理一：泌尿系统精准调节',
-                'mechanism_detail1_desc': '南瓜籽胜肽富含专一性植物固醇与活性氨基酸序列，经美国实验室临床验证可温和调节5α-还原酶活性，维护前列腺组织的生理结构与功能；同时，小分子胜肽可与膀胱及尿道平滑肌细胞的特异性受体结合，缓解异常收缩，增加膀胱有效容量，减少排尿急迫感、频尿及夜间如厕次数，实现"精准调节，根源改善"。',
-                'mechanism_detail2_title': '机理二：深层抗氧化与抗炎症',
-                'mechanism_detail2_desc': '螺旋藻素中的藻蓝蛋白(Phycocyanin)是天然强效抗氧化剂，清除自由基的能力是维生素C的5倍以上，可深层减轻氧化压力对泌尿系统（肾小球、膀胱上皮）的损伤；其独特的抗炎因子可抑制NF-κB信号通路，降低泌尿道慢性轻微炎症反应，改善排尿不适与灼热感，从细胞层级守护泌尿健康。',
-                'mechanism_detail3_title': '机理三：全维营养赋能与活力提升',
-                'mechanism_detail3_desc': '螺旋藻被誉为"美国实验室级完全食物"，含18种必需氨基酸、完整B族维生素、有机铁、镁及gamma-次亚麻油酸(GLA)，可全面支持细胞能量代谢，改善因老化或营养失衡导致的疲惫感；其中的天然叶绿素与藻蓝素可促进血红素合成，提升血氧携带能力，让使用者重拾年轻活力，畅享高品质生活。',
-                'mechanism_detail4_title': '机理四：神经内分泌平衡辅助',
-                'mechanism_detail4_desc': '南瓜籽中的色氨酸是血清素（"快乐激素"）的前体，可稳定情绪、改善睡眠质量；螺旋藻中的镁、锌等矿物质可优化神经传导效率，减少压力荷尔蒙（皮质醇）的过度分泌。复合配方从营养层面调节神经内分泌平衡，减少因压力、失眠恶化的泌尿问题，实现"身心同调"的美国实验室级护理效果。',
-                
-                'benefit_title': '临床效益与美国实验室级安全保障',
-                'clinical_benefit_title': '关键临床效益 (美国实验室级验证)',
-                'table_header1': '调节指标',
-                'table_header2': '改善幅度',
-                'table_header3': '临床研究规模',
-                'benefit1': '夜尿次数',
-                'study1': '12周双盲对照试验, n=120',
-                'benefit2': '日间排尿急迫感',
-                'study2': '12周双盲对照试验, n=120',
-                'benefit3': '整体疲劳感 (VAS评分)',
-                'study3': '8周开放性试验, n=85',
-                'benefit4': '泌尿健康生活质量 (IPSS评分)',
-                'study4': '12周双盲对照试验, n=120',
-                'safety_title': '美国实验室级安全性档案',
-                'safety1': '于连续12周的人体临床试验中，未发现与产品相关的严重不良反应，耐受性优异。',
-                'safety2': '少数受试者（<2%）报告极轻微、短暂的胃肠不适（如轻微腹胀），均在持续服用3-5天后自行缓解，无需中断。',
-                'safety3': '原料通过国际SGS重金属、农药残留、微生物检测，符合台湾卫福部及美国FDA食品原料安全规范。',
-                'safety4': '南瓜籽与螺旋藻均为具数十年食用历史的天然食物，无药物相互作用风险，适合长期调节服用。',
-                'safety5': '生产车间通过ISO22000、HACCP国际认证，全程美国实验室级品控，确保每一批次品质稳定。',
-                
-                'contact_title': '联系我们｜尊享美国实验室级技术支持',
-                'company_name': '首池有限公司',
-                'phone_label': '技术专线：',
-                'address': '台湾省嘉义市自强街195巷33之28号',
-                'company_desc': '我们专注于开发"天然原料为本、美国实验室级制程、科学实证背书"的高端保健解决方案，为合作伙伴提供完整的技术支持、定制化配方开发与营销素材服务，共同开拓高端保健市场。',
-                'contact_button': '申请尊享美国实验室级技术文件',
-                
-                'footer_tagline': '活力得® 南瓜籽胜肽+螺旋藻素复合精华美国实验室级天然功能保健的科学之选',
-                'quick_links': '快速链接',
-                'legal_info': '法律信息',
-                'privacy_policy': '隐私政策',
-                'terms_of_use': '使用条款',
-                'disclaimer': '本产品为膳食补充品，不具有诊断、治疗、治愈或预防任何疾病之功效。食用前请咨询专业医务人员建议。',
-                'copyright': '© 2026 首池有限公司 活力得® 版权所有。｜美国实验室级保健原料供应商'
-            },
-            'en': {
-                // 英文翻譯 - 貨幣數值已根據匯率更新
-                'nav_summary': 'Executive Summary',
-                'nav_tech': 'Core Technology',
-                'nav_mechanism': 'Mechanism of Action',
-                'nav_benefit': 'Benefits & Safety',
-                'nav_ingredient': 'Premium Ingredients',
-                'nav_product': 'Product Specifications',
-                'nav_contact': 'Contact Us',
-                
-                'banner_title': 'Vitality® Pumpkin Seed Peptide + Spirulina Complex',
-                'banner_subtitle': 'US Lab-Grade Scientific Extract｜Standardized 85% Pumpkin Seed Peptide & High-Purity Spirulina【Targeted Urinary Health for Middle-Aged & Elderly】Precise Regulation of Frequent/Leakage/Nocturia · Antioxidant Energy Enhancement',
-                'banner_tagline': 'Vitality® Natural Functional Health © 2026',
-                
-                'summary_title': 'Executive Summary: US Lab-Grade Core Value & Key Metrics',
-                'summary_content': 'Core Positioning: Breakthrough traditional extraction technology bottlenecks with US lab-grade patented enzymatic hydrolysis and low-temperature cold extraction processes, extracting high-purity peptides (Cucurbita Pepo Peptide) from organically certified pumpkin seeds, and combining with the comprehensive nutrients of superfood spirulina (Spirulina), providing scientifically validated, safe, and burden-free premium health solutions for middle-aged and elderly urinary system function decline, oxidative stress accumulation, and energy depletion, redefining the gold standard for natural functional regulation.',
-                
-                'roi_title': 'Return on Investment Analysis (ROI)',
-                'roi_1': 'Annual ROI',
-                'roi_2': '3-Year Cumulative Return',
-                'roi_3': 'Estimated Annual Revenue',
-                
-                // Percentages remain unchanged
-                'card1_title': 'Pumpkin Seed Peptide Purity',
-                'card1_subtitle': 'Traditional Hydrolysis 60% → US Lab-Grade Patented Tech 85%+',
-                'card1_desc': 'Significant increase in key active components, absorption efficiency doubled',
-                'card2_title': 'Antioxidant Capacity (ORAC)',
-                'card2_subtitle': 'Spirulina complex formula US lab-grade upgrade',
-                'card2_desc': 'Deep combat against free radicals, delaying functional aging process',
-                'card3_title': 'Nocturia Frequency Improvement',
-                'card3_subtitle': 'Baseline 3.8 times → After 12 weeks 1.0 time',
-                'card3_desc': 'Significant relief of nocturia issues in middle-aged and elderly, sleep quality upgraded',
-                'card4_title': 'Quality of Life Score',
-                'card4_subtitle': 'Precise improvement of urinary-related life disturbances',
-                'card4_desc': 'Significant boost in daily activity confidence, regaining quality life',
-                
-                'tech_title': 'Core Dual Ingredients & US Lab-Grade Scientific Process',
-                'tech_intro': 'Dual Mechanisms, Synergistic Effects｜Pumpkin seed peptide precisely regulates urinary system function, spirulina comprehensively nourishes cell vitality, combined with US lab-grade processing technology, achieving the dual value of "precise regulation + comprehensive empowerment."',
-                'tech_point1': '1. US Lab-Grade Patented Enzymatic Hydrolysis Peptide',
-                'tech_desc1': 'Using targeted enzyme cleavage technology to precisely release bioactive small-molecule peptides from pumpkin seeds, molecular weight <1000Da, which can directly penetrate intestinal walls for absorption, reaching the urinary system to function, avoiding the low absorption efficiency of traditional large-molecule proteins.',
-                'tech_point2': '2. Low-Temperature Cell Wall-Breaking Spirulina Cold Extraction',
-                'tech_desc2': '-40℃ low-temperature physical cell wall-breaking technology, completely retaining phycocyanin, natural vitamins, minerals, and essential amino acids in spirulina, avoiding nutrient loss from high-temperature extraction, ensuring every drop of essence maintains full activity.',
-                'tech_point3': '3. Microencapsulation Stabilization Coating Technology',
-                'tech_desc3': 'Using US lab-grade microencapsulation coating process to protect active ingredients through the gastric acid barrier, ensuring peptides and nutrients are released at specific points in the intestines, bioavailability increased by 150%, truly achieving "ingest, absorb, and function."',
-                
-                'ingredient_title': 'Premium Ingredients｜Source-Controlled US Lab-Grade Quality',
-                'ingredient1_title': 'Organic Pumpkin Seeds',
-                'ingredient1_desc': 'Using EU organically certified pumpkin seeds, free from pesticides and heavy metal residues, peptide content far exceeds ordinary varieties, providing a solid foundation for active components.',
-                'ingredient2_title': 'High-Purity Spirulina',
-                'ingredient2_desc': 'Selected spirulina cultivated in Taiwan clean water areas, phycocyanin content ≥18%, far exceeding industry standards, leading in both antioxidant and nutritional value.',
-                'ingredient3_title': 'Multiple Application Forms',
-                'ingredient3_desc': 'Can be made into capsules, beverages, solid drinks, and other forms to meet different consumption scenarios, US lab-grade quality suitable for high-end health markets.',
-                
-                'product_title': 'Product Specifications & Usage Recommendations',
-                'product_specs': 'Product Specifications',
-                'spec1': 'Packaging: 10 capsules/box',
-                'spec2': 'Net content: Each capsule contains 85mg pumpkin seed peptide + 150mg spirulina',
-                'spec3': 'Storage conditions: Store in cool dry place, avoid direct sunlight',
-                'spec4': 'Shelf life: 36 months',
-                'usage_title': 'Usage Recommendations',
-                'usage_desc': 'Standard usage: Take 1 capsule per time, every 1~3 days; Intensive care: Initially take 1 capsule daily, after 4 weeks adjust to maintenance dose (every 1~3 days 1 capsule); Timing: Recommended 30 minutes after meals to enhance absorption.',
-                'pricing_title': 'Pricing Information',
-                'price_retail': 'Retail Price/Box',
-                'price_wholesale': 'Wholesale Price/Box',
-                'price_bulk': 'Bulk Purchase Price/Box',
-                
-                'mechanism_title': 'Four Core Mechanisms of Action｜US Lab-Grade Precise Regulation',
-                'mechanism1_title': 'Pumpkin Seed Peptide Precise Mechanism on Urinary System',
-                'mechanism2_title': 'Spirulina Antioxidant & Energy Metabolism Mechanism',
-                'mechanism_detail1_title': 'Mechanism 1: Urinary System Precise Regulation',
-                'mechanism_detail1_desc': 'Pumpkin seed peptide is rich in specific phytosterols and active amino acid sequences, clinically verified by US laboratories to gently regulate 5α-reductase activity, maintaining the physiological structure and function of prostate tissue; simultaneously, small-molecule peptides can bind to specific receptors on bladder and urethral smooth muscle cells, alleviating abnormal contractions, increasing bladder effective capacity, reducing urinary urgency, frequency, and nighttime bathroom visits, achieving "precise regulation, root improvement."',
-                'mechanism_detail2_title': 'Mechanism 2: Deep Antioxidant & Anti-Inflammatory',
-                'mechanism_detail2_desc': 'Phycocyanin in spirulina is a natural potent antioxidant, with free radical scavenging capacity more than 5 times that of vitamin C, deeply reducing oxidative stress damage to the urinary system (glomerulus, bladder epithelium); its unique anti-inflammatory factors inhibit the NF-κB signaling pathway, reducing chronic mild inflammation in the urinary tract, improving urinary discomfort and burning sensation, protecting urinary health at the cellular level.',
-                'mechanism_detail3_title': 'Mechanism 3: Comprehensive Nutritional Empowerment & Vitality Enhancement',
-                'mechanism_detail3_desc': 'Spirulina is known as the "US lab-grade complete food," containing 18 essential amino acids, complete B-vitamins, organic iron, magnesium, and gamma-linolenic acid (GLA), comprehensively supporting cellular energy metabolism, improving fatigue caused by aging or nutritional imbalance; its natural chlorophyll and phycocyanin promote hemoglobin synthesis, enhancing blood oxygen carrying capacity, allowing users to regain youthful vitality and enjoy high-quality life.',
-                'mechanism_detail4_title': 'Mechanism 4: Neuroendocrine Balance Assistance',
-                'mechanism_detail4_desc': 'Tryptophan in pumpkin seeds is a precursor to serotonin ("happiness hormone"), stabilizing mood and improving sleep quality; minerals like magnesium and zinc in spirulina optimize nerve conduction efficiency, reducing excessive secretion of stress hormones (cortisol). The complex formula regulates neuroendocrine balance from a nutritional perspective, reducing urinary problems exacerbated by stress and insomnia, achieving "mind-body coordination" US lab-grade care effects.',
-                
-                'benefit_title': 'Clinical Benefits & US Lab-Grade Safety Assurance',
-                'clinical_benefit_title': 'Key Clinical Benefits (US Lab-Grade Verified)',
-                'table_header1': 'Regulation Indicators',
-                'table_header2': 'Improvement Rate',
-                'table_header3': 'Clinical Study Scale',
-                'benefit1': 'Nocturia Frequency',
-                'study1': '12-week double-blind controlled trial, n=120',
-                'benefit2': 'Daytime Urinary Urgency',
-                'study2': '12-week double-blind controlled trial, n=120',
-                'benefit3': 'Overall Fatigue (VAS Score)',
-                'study3': '8-week open trial, n=85',
-                'benefit4': 'Urinary Health Quality of Life (IPSS Score)',
-                'study4': '12-week double-blind controlled trial, n=120',
-                'safety_title': 'US Lab-Grade Safety Profile',
-                'safety1': 'In a continuous 12-week human clinical trial, no product-related serious adverse reactions were found, with excellent tolerance.',
-                'safety2': 'Few subjects (<2%) reported extremely mild, transient gastrointestinal discomfort (such as mild bloating), all self-resolved after 3-5 days of continuous use without interruption.',
-                'safety3': 'Raw materials passed international SGS heavy metal, pesticide residue, and microbial testing, complying with Taiwan FDA and US FDA food ingredient safety standards.',
-                'safety4': 'Pumpkin seeds and spirulina are natural foods with decades of consumption history, no risk of drug interactions, suitable for long-term regulation.',
-                'safety5': 'Production facility passed ISO22000, HACCP international certification, full US lab-grade quality control ensuring each batch quality stability.',
-                
-                'contact_title': 'Contact Us｜Enjoy US Lab-Grade Technical Support',
-                'company_name': 'Shouchi Co., Ltd.',
-                'phone_label': 'Technical Hotline:',
-                'address': 'No.33-28, Lane 195, Ziqiang Street, Chiayi City, Taiwan',
-                'company_desc': 'We focus on developing "natural ingredient-based, US lab-grade process, scientifically validated" high-end health solutions, providing partners with comprehensive technical support, customized formula development, and marketing material services, jointly exploring the high-end health market.',
-                'contact_button': 'Apply for Exclusive US Lab-Grade Technical Documents',
-                
-                'footer_tagline': 'Vitality® Pumpkin Seed Peptide + Spirulina Complex US Lab-Grade Natural Functional Health Scientific Choice',
-                'quick_links': 'Quick Links',
-                'legal_info': 'Legal Information',
-                'privacy_policy': 'Privacy Policy',
-                'terms_of_use': 'Terms of Use',
-                'disclaimer': 'This product is a dietary supplement and is not intended to diagnose, treat, cure, or prevent any disease. Consult healthcare professional before use.',
-                'copyright': '© 2026 Shouchi Co., Ltd. Vitality® All rights reserved.｜US Lab-Grade Health Ingredient Supplier'
-            }
+            'zh-TW': {},
+            'zh-CN': {},
+            'en': {}
         };
-
+        
         // 貨幣符號映射
         const currencySymbols = {
             'zh-TW': 'NTD',
@@ -974,7 +927,7 @@
             updateCurrencyValues(lang);
             
             // 隱藏下拉選單
-            languageDropdown.classList.remove('show');
+            languageDropdown.classList.add('hidden');
         }
 
         // 更新貨幣數值
@@ -987,7 +940,9 @@
                     // 如果是百分比數值（ROI），不進行貨幣轉換
                     const isPercentage = element.closest('.roi-value') || 
                                         element.textContent.includes('%') ||
-                                        element.closest('.text-3xl'); // 卡片中的百分比數值
+                                        element.closest('.text-2xl') || 
+                                        element.closest('.text-3xl') || 
+                                        element.closest('.text-4xl');
                     
                     if (isPercentage) {
                         // 百分比保持原樣
@@ -1008,30 +963,31 @@
         }
 
         // 事件監聽器
-        languageBtn.addEventListener('click', () => {
-            languageDropdown.classList.toggle('show');
+        languageBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('hidden');
         });
 
         document.querySelectorAll('.language-option').forEach(option => {
-            option.addEventListener('click', (e) => {
-                const lang = e.currentTarget.getAttribute('data-lang');
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const lang = this.getAttribute('data-lang');
                 switchLanguage(lang);
             });
         });
 
         // 點擊頁面其他區域關閉下拉選單
-        document.addEventListener('click', (e) => {
-            if (!languageBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
-                languageDropdown.classList.remove('show');
-            }
+        document.addEventListener('click', function() {
+            languageDropdown.classList.add('hidden');
         });
 
         // 行動端選單功能
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         
-        menuBtn.addEventListener('click', () => {
+        menuBtn.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('open');
             const icon = menuBtn.querySelector('i');
             if (mobileMenu.classList.contains('hidden')) {
                 icon.classList.remove('fa-times');
@@ -1045,8 +1001,9 @@
         // 點擊導航連結關閉行動選單
         const mobileLinks = mobileMenu.querySelectorAll('a');
         mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', function() {
                 mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('open');
                 const icon = menuBtn.querySelector('i');
                 icon.classList.remove('fa-times');
                 icon.classList.add('fa-bars');
@@ -1054,8 +1011,10 @@
         });
 
         // 導航欄滾動效果
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
+        let lastScrollY = window.scrollY;
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', function() {
             if (window.scrollY > 50) {
                 header.classList.add('shadow-lg');
                 header.classList.remove('shadow-md');
@@ -1063,28 +1022,70 @@
                 header.classList.remove('shadow-lg');
                 header.classList.add('shadow-md');
             }
+            
+            // 隱藏行動選單當滾動時
+            if (!mobileMenu.classList.contains('hidden') && Math.abs(window.scrollY - lastScrollY) > 10) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('open');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+            
+            lastScrollY = window.scrollY;
         });
 
-        // 滾動淡入效果
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                }
+        // 觸摸反饋效果
+        document.querySelectorAll('.touch-active').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.classList.add('active');
             });
-        }, observerOptions);
-
-        document.querySelectorAll('section').forEach(section => {
-            observer.observe(section);
+            
+            element.addEventListener('touchend', function() {
+                this.classList.remove('active');
+            });
         });
+
+        // 卡片觸摸效果
+        document.querySelectorAll('.card-mobile').forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'translateY(2px)';
+                this.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+            });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // 防止iOS橡皮筋效果
+        document.body.addEventListener('touchmove', function(e) {
+            if (e.target.classList.contains('table-scroll-container') || 
+                e.target.closest('.table-scroll-container')) {
+                return;
+            }
+            
+            if (this.scrollTop === 0) {
+                this.scrollTop = 1;
+            } else if (this.scrollHeight - this.scrollTop === this.clientHeight) {
+                this.scrollTop -= 1;
+            }
+        }, false);
 
         // 初始化語言
         switchLanguage('zh-TW');
+        
+        // 監聽視窗大小變化，優化移動體驗
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('open');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
     </script>
 </body>
 </html>
